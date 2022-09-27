@@ -7,13 +7,13 @@
             <img src="~/assets/img/logo.png" alt="">
             <span class="d-none d-lg-block">NiceAdmin</span>
         </a>
-        <i class="bi bi-list toggle-sidebar-btn"></i>
+        <em class="bi bi-list toggle-sidebar-btn"></em>
         </div><!-- End Logo -->
 
         <div class="search-bar">
         <form class="search-form d-flex align-items-center" method="POST" action="#">
             <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+            <button type="submit" title="Search"><em class="bi bi-search"></em></button>
         </form>
         </div><!-- End Search Bar -->
 
@@ -22,14 +22,14 @@
 
             <li class="nav-item d-block d-lg-none">
             <a class="nav-link nav-icon search-bar-toggle " href="#">
-                <i class="bi bi-search"></i>
+                <em class="bi bi-search"></em>
             </a>
             </li><!-- End Search Icon-->
 
             <li class="nav-item dropdown">
 
             <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                <i class="bi bi-bell"></i>
+                <em class="bi bi-bell"></em>
                 <span class="badge bg-primary badge-number">4</span>
             </a><!-- End Notification Icon -->
 
@@ -43,7 +43,7 @@
                 </li>
 
                 <li class="notification-item">
-                <i class="bi bi-exclamation-circle text-warning"></i>
+                <em class="bi bi-exclamation-circle text-warning"></em>
                 <div>
                     <h4>Lorem Ipsum</h4>
                     <p>Quae dolorem earum veritatis oditseno</p>
@@ -56,7 +56,7 @@
                 </li>
 
                 <li class="notification-item">
-                <i class="bi bi-x-circle text-danger"></i>
+                <em class="bi bi-x-circle text-danger"></em>
                 <div>
                     <h4>Atque rerum nesciunt</h4>
                     <p>Quae dolorem earum veritatis oditseno</p>
@@ -69,7 +69,7 @@
                 </li>
 
                 <li class="notification-item">
-                <i class="bi bi-check-circle text-success"></i>
+                <em class="bi bi-check-circle text-success"></em>
                 <div>
                     <h4>Sit rerum fuga</h4>
                     <p>Quae dolorem earum veritatis oditseno</p>
@@ -82,7 +82,7 @@
                 </li>
 
                 <li class="notification-item">
-                <i class="bi bi-info-circle text-primary"></i>
+                <em class="bi bi-info-circle text-primary"></em>
                 <div>
                     <h4>Dicta reprehenderit</h4>
                     <p>Quae dolorem earum veritatis oditseno</p>
@@ -104,7 +104,7 @@
             <li class="nav-item dropdown">
 
             <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                <i class="bi bi-chat-left-text"></i>
+                <em class="bi bi-chat-left-text"></em>
                 <span class="badge bg-success badge-number">3</span>
             </a><!-- End Messages Icon -->
 
@@ -187,7 +187,7 @@
 
                 <li>
                 <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                    <i class="bi bi-person"></i>
+                    <em class="bi bi-person"></em>
                     <span>My Profile</span>
                 </a>
                 </li>
@@ -197,7 +197,7 @@
 
                 <li>
                 <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                    <i class="bi bi-gear"></i>
+                    <em class="bi bi-gear"></em>
                     <span>Account Settings</span>
                 </a>
                 </li>
@@ -207,7 +207,7 @@
 
                 <li>
                 <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                    <i class="bi bi-question-circle"></i>
+                    <em class="bi bi-question-circle"></em>
                     <span>Need Help?</span>
                 </a>
                 </li>
@@ -217,7 +217,7 @@
 
                 <li>
                 <a class="dropdown-item d-flex align-items-center" href="#" @click="logout">
-                    <i class="bi bi-box-arrow-right"></i>
+                    <em class="bi bi-box-arrow-right"></em>
                     <span>Sign Out</span>
                 </a>
                 </li>
