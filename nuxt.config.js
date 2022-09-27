@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'frontspp',
+    title: 'Adminisantri',
     htmlAttrs: {
       lang: 'en'
     },
@@ -49,11 +49,49 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
+    '@nuxtjs/dotenv'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
+
+  axios: {
+    baseURL: process.env.baseURL,
+    credentials: false
+  },
+
+  auth: {
+    redirect: {
+      login: '/login',
+      home: '/',
+      logout: '/login',
+      callback: false, // not used here in our case
+    },
+    strategies: {
+      local: {
+        token: {
+          property: 'data.token',
+          global: true,
+        },
+        user: {
+          property: 'data',
+          // autoFetch: true
+        },
+        endpoints: {
+          login: { url: '/api/login', method: 'post' },
+          user: { url: '/api/user', method: 'get' },
+          logout: { url: '/api/logout', method: 'post' },
+        }
+      }
+    }
+  },
+
+  router: {
+    middleware: ['auth']
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

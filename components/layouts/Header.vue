@@ -171,12 +171,14 @@
 
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <img src="~/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                <span v-if="user" class="d-none d-md-block dropdown-toggle ps-2">{{user.name}}</span>
+                <span v-else class="d-none d-md-block dropdown-toggle ps-2">Nama</span>
             </a><!-- End Profile Iamge Icon -->
 
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
-                <h6>Kevin Anderson</h6>
+                <h6 v-if="user">{{user.name}}</h6>
+                <h6 v-else>Nama</h6>
                 <span>Web Designer</span>
                 </li>
                 <li>
@@ -214,7 +216,7 @@
                 </li>
 
                 <li>
-                <a class="dropdown-item d-flex align-items-center" href="#">
+                <a class="dropdown-item d-flex align-items-center" href="#" @click="logout">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Sign Out</span>
                 </a>
@@ -232,6 +234,19 @@
 
 <script>
     export default {
-        
+        data: function () {
+            return {
+                user:{}
+            }
+        },
+        mounted() {
+            this.user = this.$auth.user;
+        },
+        methods: {
+            async logout() {
+                    await this.$auth.logout()  //KEMUDIAN SET ISAUTH JADI FALSE
+                    this.$router.push('/login') //DAN REDIRECT KE HALAMAN LOGIN
+                },
+        }
     }
 </script>
