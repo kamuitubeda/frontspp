@@ -2,19 +2,17 @@
     <div>
         <div class="pagetitle">
         <h1 class="display-3">Kelas</h1>
-        <nav>
-            <ol class="breadcrumb">
+        <ol class="breadcrumb">
             <li class="breadcrumb-item"><NuxtLink to="/">Home</NuxtLink></li>
             <li class="breadcrumb-item active">Kelas</li>
-            </ol>
-        </nav>
+        </ol>
         </div><!-- End Page Title -->
 
         <section class="section dashboard">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-body">
                             <div class="row mt-2">
                                 <div class="col-sm-6">
                                     <button style="display:block; width:100%;" class="btn btn-primary ml-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
@@ -27,8 +25,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-body">
                             <div class="row">
                                 <div class="col">
                                     <div class="table-responsive">
@@ -72,20 +68,20 @@
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form @submit.prevent="tambah" autocomplete="off">
+                                    <form @submit.prevent="save" autocomplete="off">
                                     <div class="modal-body">
                                         <p class="small">Isi semua kolom berikut ini</p>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Jenjang Kelas</label>
-                                                    <input id="jenjang" type="text" class="form-control" v-model="simpan.jenjang" placeholder="7">
+                                                    <input id="jenjang" type="text" class="form-control" v-model="simpan.jenjang" placeholder="7" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 pr-0">
                                                 <div class="form-group">
                                                     <label>Nama Ruang Kelas</label>
-                                                    <input id="ruang" type="text" class="form-control" v-model="simpan.ruang" placeholder="A">
+                                                    <input id="ruang" type="text" class="form-control" v-model="simpan.ruang" placeholder="A" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -148,7 +144,7 @@ export default {
         rows: [],
         kelas: [],
         simpan: {
-            nama: '',
+            tapel: '',
             jenjang: '',
             ruang: '',
         },
@@ -198,6 +194,38 @@ export default {
             .catch(error => {
                 console.log(error)
             })
+        },
+        save(e) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/kelas'
+
+            e.preventDefault()
+
+            this.$axios.post(apiURL, {
+                //data yang dikirim ke server
+                jenjang: this.simpan.jenjang,
+                ruang: this.simpan.ruang,
+                tahun_pelajaran_id: 2
+                },{
+                headers: {
+                    'Authorization': token
+                }
+                })
+                .then(() => {
+                    this.clearInput();
+                    this.initialize();
+                    $(':input','#addRowModal').val("");
+                    $('#addRowModal').modal('toggle');
+                })
+                .catch(error => {
+                    //assign validation  
+                    this.validation = error.response.data
+                })
+        },
+        clearInput() {
+            this.simpan.jenjang = '';
+            this.simpan.ruang = '';
         }
     }
 }

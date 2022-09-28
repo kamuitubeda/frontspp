@@ -3,7 +3,15 @@
 </template>
 
 <script>
+import Rekening from '@/components/Rekening'
 export default {
-    name: 'Kelas'
-}
+    head: {
+        title: "Rekening - Adminisantri",
+    },
+    components: {
+        Rekening
+    }
+    
+};
 </script>
+  

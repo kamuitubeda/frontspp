@@ -3,7 +3,15 @@
 </template>
 
 <script>
+import Tagihan from '@/components/Tagihan'
 export default {
-    name: 'Kelas'
-}
+    head: {
+        title: "Tagihan - Adminisantri",
+    },
+    components: {
+        Tagihan
+    }
+    
+};
 </script>
+  

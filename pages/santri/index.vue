@@ -3,7 +3,15 @@
 </template>
 
 <script>
+import Santri from '@/components/Santri'
 export default {
-    name: 'Kelas'
-}
+    head: {
+        title: "Santri - Adminisantri",
+    },
+    components: {
+        Santri
+    }
+    
+};
 </script>
+  

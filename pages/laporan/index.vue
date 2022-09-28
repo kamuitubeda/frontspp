@@ -3,7 +3,15 @@
 </template>
 
 <script>
+import Laporan from '@/components/Laporan'
 export default {
-    name: 'Laporan'
-}
+    head: {
+        title: "Laporan - Adminisantri",
+    },
+    components: {
+        Laporan
+    }
+    
+};
 </script>
+  
