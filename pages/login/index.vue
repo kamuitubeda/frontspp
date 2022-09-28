@@ -3,9 +3,15 @@
 </template>
 
 <script>
-export default {
-    layout: 'blank',
-    name: 'CobaNuxt'
-}
+    import Login from '@/components/Login'
+    export default {
+        layout: "blank",
+        head: {
+            title: "Login - Adminisantri",
+        },
+        components: {
+            Login
+        }
+    };
 </script>
   

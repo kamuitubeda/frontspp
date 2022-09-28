@@ -1,93 +1,67 @@
 <template>
-    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-              <div class="d-flex justify-content-center py-4">
-                <a href="index.html" class="logo d-flex align-items-center w-auto">
-                  <img src="~/assets/img/logo.png" alt="">
-                  <span class="d-none d-lg-block">NiceAdmin</span>
-                </a>
-              </div><!-- End Logo -->
-              <div class="card mb-3">
-                <div class="card-body">
-                  <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                    <p class="text-center small">Enter your username & password to login</p>
-                  </div>
-                  <form class="row g-3 needs-validation" @submit.prevent="login" action="." method="get" autocomplete="off">
-                    <div class="col-12">
-                      <label for="yourEmail" class="form-label">Email</label>
-                      <div class="input-group has-validation">
-                        <input type="email" name="email" class="form-control" id="yourEmail" v-model="auth.email" required>
-                        <div class="invalid-feedback">Please enter your email.</div>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control" id="yourPassword" v-model="auth.password" required>
-                      <div class="invalid-feedback">Please enter your password!</div>
-                    </div>
-                    <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Login</button>
-                    </div>
-                    <div class="col-12">
-                      <p class="small mb-0">Don't have account? <NuxtLink to="register">Create an account</NuxtLink></p>
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-              </div>
-            </div>
+    <div class="row w-100 mx-0">
+      <div class="col-lg-4 mx-auto">
+        <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+          <div class="brand-logo">
+            <img src="~/assets/images/logo.svg" alt="logo">
           </div>
+          <h4>Hello! let's get started</h4>
+          <h6 class="fw-light">Sign in to continue.</h6>
+          <form class="pt-3" @submit.prevent="login" action="." autocomplete="off">
+            <div class="form-group">
+              <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" v-model="auth.email" placeholder="Username">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" v-model="auth.password" placeholder="Password">
+            </div>
+            <div class="mt-3">
+              <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" type="submit">SIGN IN</button>
+            </div>
+            <div class="text-center mt-4 fw-light">
+              Don't have an account? <a href="register.html" class="text-primary">Create</a>
+            </div>
+          </form>
         </div>
-    </section>
+      </div>
+    </div>
 </template>
 
 <script>
-    export default {
-      layout: 'blank',
-      auth: false,
-      data() {
-            return {
-                //VARIABLE UNTUK MENAMPUNG INPUTAN USER
-                auth: {
-                    email: null,
-                    password: null
-                },
-                showPassword: false,
-                error: ''
-            }
-        },
-        mounted() {
-            //KITA LAKUKAN PENGECEK, JIKA SUDAH LOGIN
-    
-            if (this.$auth.loggedIn) {
-                //MAKA REDIRECT KE HALAMAN UTAMA ATAU DASHBOARD
-                this.$router.push('/')
-            } 
-        },
-        methods: {
-            //JIKA TOMBOL LOGIN DITEKAN, MAKA METHOD INI AKAN DIJALANKAN
-            async login() {
-                try {
-                    await this.$auth.loginWith('local', { 
-                      data: this.auth 
-                    }).then(res => {
-                      this.$router.push('/') // redirecting after login
-                    }).catch(err => {
-                      console.log(err.response)
-                    })
-                } catch (err) {
-                    console.log(err)
-                }
-            },
-        }
-    }
-    </script>
+export default {
+    auth: false,
+    data() {
+          return {
+              //VARIABLE UNTUK MENAMPUNG INPUTAN USER
+              auth: {
+                  email: null,
+                  password: null
+              },
+              showPassword: false,
+              error: ''
+          }
+      },
+      mounted() {
+          //KITA LAKUKAN PENGECEK, JIKA SUDAH LOGIN
+          if (this.$auth.loggedIn) {
+              //MAKA REDIRECT KE HALAMAN UTAMA ATAU DASHBOARD
+              this.$router.push('/')
+          } 
+      },
+      methods: {
+          //JIKA TOMBOL LOGIN DITEKAN, MAKA METHOD INI AKAN DIJALANKAN
+          async login() {
+              try {
+                  await this.$auth.loginWith('local', { 
+                    data: this.auth 
+                  }).then(res => {
+                    this.$router.push('/') // redirecting after login
+                  }).catch(err => {
+                    console.log(err.response)
+                  })
+              } catch (err) {
+                  console.log(err)
+              }
+          },
+      }
+}
+</script>

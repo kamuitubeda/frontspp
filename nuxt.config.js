@@ -16,28 +16,32 @@ export default {
       { rel: 'stylesheet', type: 'css', href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i' },
     ],
     script: [
-      { src: "/vendor/apexcharts/apexcharts.min.js"},
-      { src: "/vendor/bootstrap/js/bootstrap.bundle.min.js"},
-      { src: "/vendor/chart.js/chart.min.js"},
-      { src: "/vendor/echarts/echarts.min.js"},
-      { src: "/vendor/quill/quill.min.js"},
-      { src: "/vendor/simple-datatables/simple-datatables.js"},
-      { src: "/vendor/tinymce/tinymce.min.js"},
-      { src: "/vendor/php-email-form/validate.js"},
-      { src: "/js/main.js", body: true, async: true}
+      { src: "/vendors/js/vendor.bundle.base.js", body: true, async: true},
+      { src: "/vendors/chart.js/chart.min.js"},
+      { src: "/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"},
+      { src: "/vendors/progressbar.js/progressbar.min.js"},
+      { src: "/js/off-canvas.js"},
+      { src: "/js/hoverable-collapse.js"},
+      { src: "/js/template.js"},
+      { src: "/js/settings.js"},
+      { src: "/js/todolist.js"},
+      { src: "/js/jquery.cookie.js"},
+      { src: "/js/dashboard.js", body: true, async: true},
+      { src: "/js/Chart.roundedBarCharts.js"}
     ]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '@assets/vendor/bootstrap/css/bootstrap.min.css',
-    '@assets/vendor/bootstrap-icons/bootstrap-icons.css',
-    '@assets/vendor/boxicons/css/boxicons.min.css',
-    '@assets/vendor/quill/quill.snow.css',
-    '@assets/vendor/quill/quill.bubble.css',
-    '@assets/vendor/remixicon/remixicon.css',
-    '@assets/vendor/simple-datatables/style.css',
-    '@assets/css/style.css'
+    '@assets/vendors/feather/feather.css',
+    '@assets/vendors/mdi/css/materialdesignicons.min.css',
+    '@assets/vendors/ti-icons/css/themify-icons.css',
+    '@assets/vendors/typicons/typicons.css',
+    '@assets/vendors/simple-line-icons/css/simple-line-icons.css',
+    '@assets/vendors/css/vendor.bundle.base.css',
+    // '@assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css',
+    '@assets/js/select.dataTables.min.css',
+    '@assets/css/vertical-layout-light/style.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
