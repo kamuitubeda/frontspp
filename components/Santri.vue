@@ -172,11 +172,15 @@ export default {
                 const nama = row.nama.toLowerCase();
                 const alamat = row.alamat.toString().toLowerCase();
                 const telepon = row.telepon.toLowerCase();
+                const nomor_induk = row.nomor_induk.toLowerCase();
+                const nama_wali = row.nama_wali.toLowerCase();
                 const searchTerm = this.filter.toLowerCase();
 
                 return nama.includes(searchTerm) || 
                 alamat.includes(searchTerm) ||
-                telepon.includes(searchTerm);
+                telepon.includes(searchTerm) ||
+                nomor_induk.includes(searchTerm) ||
+                nama_wali.includes(searchTerm);
             });
         }
     },
@@ -209,9 +213,13 @@ export default {
 
             this.$axios.post(apiURL, {
                 //data yang dikirim ke server
-                jenjang: this.simpan.jenjang,
-                ruang: this.simpan.ruang,
-                tahun_pelajaran_id: 2
+                nomor_induk: this.simpan.nomor_induk,
+                nama: this.simpan.nama,
+                alamat: this.simpan.alamat,
+                telepon: this.simpan.telepon,
+                nama_wali: this.simpan.nama_wali,
+                aktif: 1,
+                kelas_id: 1
                 },{
                 headers: {
                     'Authorization': token
@@ -229,8 +237,11 @@ export default {
                 })
         },
         clearInput() {
-            this.simpan.jenjang = '';
-            this.simpan.ruang = '';
+            this.simpan.nomor_induk = '';
+            this.simpan.nama = '';
+            this.simpan.alamat = '';
+            this.simpan.telepon = '';
+            this.simpan.nama_wali = '';
         }
     }
 }
