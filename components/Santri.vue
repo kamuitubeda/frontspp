@@ -14,15 +14,21 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row mt-2">
-                                <div class="col-sm-6">
-                                    <button style="display:block; width:100%;" class="btn btn-primary ml-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
-                                        Tambah Santri
-                                    </button>
+                                <div class="col-sm-6 col-md-4" style="padding-top:0.5em;">
+                                    <select v-model="kelasId" name="kelasId" id="kelasId" class="form-control" tabindex="12">
+                                        <option value="">Semua Kelas</option>
+                                        <option v-for="(row) in kelas" :key="row.id" :value="row.id">Kelas {{ row.nama }}</option>
+                                    </select>
                                 </div>
-                                <div class="col-sm-6" style="padding-top:0.5em;">
+                                <div class="col-sm-6 col-md-4" style="padding-top:0.5em;">
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
                                     </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4">
+                                    <button style="display:block; width:100%;" class="btn btn-primary ml-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                                        Tambah Santri
+                                    </button>
                                 </div>
                             </div>
                             <div class="row">
@@ -32,12 +38,16 @@
                                             <thead>
                                                 <tr>
                                                     <th>Nama</th>
+                                                    <th>Alamat</th>
+                                                    <th>Nama Wali</th>
                                                     <th style="width: 20%">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody v-for="(row,index) in filteredRows" :key="index">
                                                 <tr>
                                                     <td>{{ row.nama }}</td>
+                                                    <td>{{ row.alamat }}</td>
+                                                    <td>{{ row.nama_wali }}</td>
                                                     <td>
                                                         <div class="form-button-action">
                                                             <button type="button" @click="editRow(row.combinedId)" data-toggle="modal" data-target="#editRowModal" class="btn btn-sm btn-primary" style="margin-right:2.5px" data-original-title="Edit Barang">
@@ -141,6 +151,8 @@ export default {
     data() {
       return {
         filter: '',
+        kelasId: '',
+        kelas: [],
         rows: [],
         santri: [],
         simpan: {
@@ -162,26 +174,38 @@ export default {
       }
     },
     mounted() {
-		this.initialize();
+        this.initialize();
 	},
     async fetch() {
     },
+    created() {
+    },
     computed: {
         filteredRows() {
-            return this.rows.filter(row => {
-                const nama = row.nama.toLowerCase();
-                const alamat = row.alamat.toString().toLowerCase();
-                const telepon = row.telepon.toLowerCase();
-                const nomor_induk = row.nomor_induk.toLowerCase();
-                const nama_wali = row.nama_wali.toLowerCase();
-                const searchTerm = this.filter.toLowerCase();
+            let data = this.rows;
 
-                return nama.includes(searchTerm) || 
-                alamat.includes(searchTerm) ||
-                telepon.includes(searchTerm) ||
-                nomor_induk.includes(searchTerm) ||
-                nama_wali.includes(searchTerm);
-            });
+            if(this.kelasId != "") {
+                data = data.filter((item) => {
+                    return item.kelas_id === this.kelasId
+                })                
+            } 
+
+            data = data.filter(row => {
+                    const nama = row.nama.toLowerCase();
+                    const alamat = row.alamat.toString().toLowerCase();
+                    const telepon = row.telepon.toLowerCase();
+                    const nomor_induk = row.nomor_induk.toLowerCase();
+                    const nama_wali = row.nama_wali.toLowerCase();
+                    const searchTerm = this.filter.toLowerCase();
+
+                    return nama.includes(searchTerm) || 
+                    alamat.includes(searchTerm) ||
+                    telepon.includes(searchTerm) ||
+                    nomor_induk.includes(searchTerm) ||
+                    nama_wali.includes(searchTerm);
+                });
+
+            return data;
         }
     },
     methods: {
@@ -189,6 +213,7 @@ export default {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
             const apiURL = baseURL + '/api/santri'
+            const kelasURL = baseURL + '/api/kelas'
 
             axios.get(apiURL, {
                 headers: {
@@ -199,6 +224,19 @@ export default {
             ).then(response => {
                 this.santri = response.data.data
                 this.rows = this.santri
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
+            axios.get(kelasURL, {
+                headers: {
+                    'Authorization': token,
+                    'Accept': 'application/json'
+                }
+            }
+            ).then(response => {
+                this.kelas = response.data.data
             })
             .catch(error => {
                 console.log(error)

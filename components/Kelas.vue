@@ -40,10 +40,10 @@
                                                     <td>{{ row.nama }}</td>
                                                     <td>
                                                         <div class="form-button-action">
-                                                            <button type="button" @click="editRow(row.combinedId)" data-toggle="modal" data-target="#editRowModal" class="btn btn-sm btn-primary" style="margin-right:2.5px" data-original-title="Edit Barang">
+                                                            <button type="button" @click="editRow(row)" data-toggle="modal" data-target="#editRowModal" class="btn btn-sm btn-primary" style="margin-right:2.5px" data-original-title="Edit Barang">
                                                                 Edit
                                                             </button>
-                                                            <button type="button" @click="deleteRow(row.combinedId, index)" data-toggle="tooltip" title="" class="btn btn-sm btn-danger" data-original-title="Remove">
+                                                            <button type="button" @click="deleteRow(row, index)" data-toggle="tooltip" title="" class="btn btn-sm btn-danger" data-original-title="Remove">
                                                                 Hapus
                                                             </button>
                                                         </div>
@@ -99,22 +99,35 @@
                                 <div class="modal-content">
                                     <div class="modal-header no-bd">
                                         <h5 class="modal-title">
-                                            <span class="fw-mediumbold">
-                                            Pelanggan</span> 
                                             <span class="fw-light">
                                                 Edit
                                             </span>
+                                            <span class="fw-mediumbold">
+                                                Kelas
+                                            </span> 
                                         </h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <form @submit.prevent="update">
                                     <div class="modal-body">
                                         <p class="small">Isi semua kolom berikut ini</p>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Jenjang Kelas</label>
+                                                    <input id="editNamaPelanggan" type="text" class="form-control" v-model="edit.jenjang" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Ruang Kelas</label>
+                                                    <input id="editPhonePelanggan" type="text" class="form-control" v-model="edit.ruang" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="modal-footer no-bd">
-                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
                                         <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
                                     </div>
                                     </form>
@@ -125,7 +138,6 @@
                 </div>
             </div>
         </section>
-
     </div>
 </template>
 <style>
@@ -222,6 +234,43 @@ export default {
                     //assign validation  
                     this.validation = error.response.data
                 })
+        },
+        editRow(item) {
+            this.edit = item;
+            $('#editRowModal').modal('show');
+        },
+        deleteRow(item, index) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/kelas/' + item.id
+
+            this.$swal.fire({
+                title: 'Hapus data kelas?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `Hapus`,
+                cancelButtonText: `Batal`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    //send data ke Rest API
+                    this.$axios.delete(apiURL, {
+                        headers: {
+                            'Authorization': token
+                        }
+                    })
+                    .then(() => {
+                        this.kelas.splice(index, 1);
+                        this.initialize();
+                    })
+                    .catch(error => {
+                        //assign validation  
+                        this.validation = error.response.data
+                    })
+                } else if (result.isDenied) {
+                    Swal.fire('Kelas batal dihapus', '', 'info')
+                }
+            })
         },
         clearInput() {
             this.simpan.jenjang = '';
