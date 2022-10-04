@@ -3,7 +3,13 @@
 </template>
 
 <script>
+import Home from '@/components/pages/home/Home'
 export default {
-  name: 'CobaNuxt'
+    head: {
+        title: "Home - Adminisantri",
+    },
+    components: {
+        Home
+    }
 }
 </script>

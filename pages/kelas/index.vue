@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Kelas from '@/components/Kelas'
+import Kelas from '@/components/pages/kelas/Kelas'
 export default {
     head: {
         title: "Kelas - Adminisantri",
@@ -11,7 +11,6 @@ export default {
     components: {
         Kelas
     }
-    
 };
 </script>
   

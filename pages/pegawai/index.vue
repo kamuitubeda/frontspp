@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Pegawai from '@/components/Pegawai'
+import Pegawai from '@/components/pages/pegawai/Pegawai'
 export default {
     head: {
         title: "Pegawai - Adminisantri",

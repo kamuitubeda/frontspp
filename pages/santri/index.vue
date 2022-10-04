@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Santri from '@/components/Santri'
+import Santri from '@/components/pages/santri/Santri'
 export default {
     head: {
         title: "Santri - Adminisantri",

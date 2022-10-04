@@ -1,10 +1,10 @@
 <template>
     <div>
         <div class="pagetitle">
-        <h1 class="display-3">Kelas</h1>
+        <h1 class="display-3">Santri</h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><NuxtLink to="/">Home</NuxtLink></li>
-            <li class="breadcrumb-item active">Kelas</li>
+            <li class="breadcrumb-item active">Santri</li>
         </ol>
         </div><!-- End Page Title -->
 
@@ -14,37 +14,50 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row mt-2">
-                                <div class="col-sm-6">
-                                    <button style="display:block; width:100%;" class="btn btn-primary ml-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
-                                        Tambah Kelas
-                                    </button>
+                                <div class="col-sm-6 col-md-4" style="padding-top:0.5em;">
+                                    <select v-model="kelasId" name="kelasId" id="kelasId" class="form-control" tabindex="12">
+                                        <option value="">Semua Kelas</option>
+                                        <option v-for="(row) in kelas" :key="row.id" :value="row.id">Kelas {{ row.nama }}</option>
+                                    </select>
                                 </div>
-                                <div class="col-sm-6" style="padding-top:0.5em;">
+                                <div class="col-sm-6 col-md-4" style="padding-top:0.5em;">
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
                                     </div>
+                                </div>
+                                <div class="col-sm-6 col-md-4">
+                                    <button style="display:block; width:100%;" class="btn btn-primary ml-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                                        Tambah Santri
+                                    </button>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
                                     <div class="table-responsive">
-                                        <table id="add-row" class="display table table-head-bg-primary table-hover" >
+                                        <table class="table table-hover">
                                             <thead>
                                                 <tr>
                                                     <th>Nama</th>
-                                                    <th style="width: 20%">Action</th>
+                                                    <th>Alamat</th>
+                                                    <th>Nama Wali</th>
+                                                    <th class="text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody v-for="(row,index) in filteredRows" :key="index">
                                                 <tr>
                                                     <td>{{ row.nama }}</td>
+                                                    <td>{{ row.alamat }}</td>
+                                                    <td>{{ row.nama_wali }}</td>
                                                     <td>
-                                                        <div class="form-button-action">
-                                                            <button type="button" @click="editRow(row)" data-toggle="modal" data-target="#editRowModal" class="btn btn-sm btn-primary" style="margin-right:2.5px" data-original-title="Edit Barang">
-                                                                Edit
+                                                        <div class="text-center">
+                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
+                                                                <i class="mdi mdi-eye"></i>
                                                             </button>
-                                                            <button type="button" @click="deleteRow(row, index)" data-toggle="tooltip" title="" class="btn btn-sm btn-danger" data-original-title="Remove">
-                                                                Hapus
+                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
+                                                                <i class="mdi mdi-lead-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row.combinedId, index)" data-toggle="tooltip" title="">
+                                                                <i class="mdi mdi-delete"></i> 
                                                             </button>
                                                         </div>
                                                     </td>
@@ -61,7 +74,7 @@
                                     <div class="modal-header no-bd">
                                         <h5 class="modal-title">
                                             <span class="fw-mediumbold">
-                                            Kelas</span> 
+                                            Santri</span> 
                                             <span class="fw-light">
                                                 Baru
                                             </span>
@@ -74,13 +87,13 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Jenjang Kelas</label>
+                                                    <label>Jenjang Santri</label>
                                                     <input id="jenjang" type="text" class="form-control" v-model="simpan.jenjang" placeholder="7" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 pr-0">
                                                 <div class="form-group">
-                                                    <label>Nama Ruang Kelas</label>
+                                                    <label>Nama Ruang Santri</label>
                                                     <input id="ruang" type="text" class="form-control" v-model="simpan.ruang" placeholder="A" required>
                                                 </div>
                                             </div>
@@ -99,35 +112,22 @@
                                 <div class="modal-content">
                                     <div class="modal-header no-bd">
                                         <h5 class="modal-title">
+                                            <span class="fw-mediumbold">
+                                            Pelanggan</span> 
                                             <span class="fw-light">
                                                 Edit
                                             </span>
-                                            <span class="fw-mediumbold">
-                                                Kelas
-                                            </span> 
                                         </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
                                     <form @submit.prevent="update">
                                     <div class="modal-body">
                                         <p class="small">Isi semua kolom berikut ini</p>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <label>Jenjang Kelas</label>
-                                                    <input id="editNamaPelanggan" type="text" class="form-control" v-model="edit.jenjang" />
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <label>Ruang Kelas</label>
-                                                    <input id="editPhonePelanggan" type="text" class="form-control" v-model="edit.ruang" />
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="modal-footer no-bd">
-                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
                                         <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
                                     </div>
                                     </form>
@@ -138,6 +138,7 @@
                 </div>
             </div>
         </section>
+
     </div>
 </template>
 <style>
@@ -153,45 +154,69 @@ export default {
     data() {
       return {
         filter: '',
-        rows: [],
+        kelasId: '',
         kelas: [],
+        rows: [],
+        santri: [],
         simpan: {
-            tapel: '',
-            jenjang: '',
-            ruang: '',
+            nomor_induk: '',
+            nama: '',
+            alamat: '',
+            nama_wali: '',
+            aktif: 1,
+            Santri: 1,
         },
         edit: {
-            combinedId: '',
+            nomor_induk: '',
             nama: '',
-            jenjang: '',
-            ruang: '',
+            alamat: '',
+            nama_wali: '',
+            aktif: 1,
+            Santri: 1,
         }
       }
     },
     mounted() {
-		this.initialize();
+        this.initialize();
 	},
     async fetch() {
     },
+    created() {
+    },
     computed: {
         filteredRows() {
-            return this.rows.filter(row => {
-                const nama = row.nama.toLowerCase();
-                const jenjang = row.jenjang.toString().toLowerCase();
-                const ruang = row.ruang.toLowerCase();
-                const searchTerm = this.filter.toLowerCase();
+            let data = this.rows;
 
-                return nama.includes(searchTerm) || 
-                jenjang.includes(searchTerm) ||
-                ruang.includes(searchTerm);
-            });
+            if(this.kelasId != "") {
+                data = data.filter((item) => {
+                    return item.kelas_id === this.kelasId
+                })                
+            } 
+
+            data = data.filter(row => {
+                    const nama = row.nama.toLowerCase();
+                    const alamat = row.alamat.toString().toLowerCase();
+                    const telepon = row.telepon.toLowerCase();
+                    const nomor_induk = row.nomor_induk.toLowerCase();
+                    const nama_wali = row.nama_wali.toLowerCase();
+                    const searchTerm = this.filter.toLowerCase();
+
+                    return nama.includes(searchTerm) || 
+                    alamat.includes(searchTerm) ||
+                    telepon.includes(searchTerm) ||
+                    nomor_induk.includes(searchTerm) ||
+                    nama_wali.includes(searchTerm);
+                });
+
+            return data;
         }
     },
     methods: {
         initialize() {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/kelas'
+            const apiURL = baseURL + '/api/santri'
+            const kelasURL = baseURL + '/api/kelas'
 
             axios.get(apiURL, {
                 headers: {
@@ -200,8 +225,21 @@ export default {
                 }
             }
             ).then(response => {
+                this.santri = response.data.data
+                this.rows = this.santri
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
+            axios.get(kelasURL, {
+                headers: {
+                    'Authorization': token,
+                    'Accept': 'application/json'
+                }
+            }
+            ).then(response => {
                 this.kelas = response.data.data
-                this.rows = this.kelas
             })
             .catch(error => {
                 console.log(error)
@@ -210,15 +248,19 @@ export default {
         save(e) {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/kelas'
+            const apiURL = baseURL + '/api/santri'
 
             e.preventDefault()
 
             this.$axios.post(apiURL, {
                 //data yang dikirim ke server
-                jenjang: this.simpan.jenjang,
-                ruang: this.simpan.ruang,
-                tahun_pelajaran_id: 2
+                nomor_induk: this.simpan.nomor_induk,
+                nama: this.simpan.nama,
+                alamat: this.simpan.alamat,
+                telepon: this.simpan.telepon,
+                nama_wali: this.simpan.nama_wali,
+                aktif: 1,
+                kelas_id: 1
                 },{
                 headers: {
                     'Authorization': token
@@ -235,46 +277,12 @@ export default {
                     this.validation = error.response.data
                 })
         },
-        editRow(item) {
-            this.edit = item;
-            $('#editRowModal').modal('show');
-        },
-        deleteRow(item, index) {
-            const token = this.$auth.strategy.token.get()
-            const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/kelas/' + item.id
-
-            this.$swal.fire({
-                title: 'Hapus data kelas?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: `Hapus`,
-                cancelButtonText: `Batal`,
-            }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-                    //send data ke Rest API
-                    this.$axios.delete(apiURL, {
-                        headers: {
-                            'Authorization': token
-                        }
-                    })
-                    .then(() => {
-                        this.kelas.splice(index, 1);
-                        this.initialize();
-                    })
-                    .catch(error => {
-                        //assign validation  
-                        this.validation = error.response.data
-                    })
-                } else if (result.isDenied) {
-                    Swal.fire('Kelas batal dihapus', '', 'info')
-                }
-            })
-        },
         clearInput() {
-            this.simpan.jenjang = '';
-            this.simpan.ruang = '';
+            this.simpan.nomor_induk = '';
+            this.simpan.nama = '';
+            this.simpan.alamat = '';
+            this.simpan.telepon = '';
+            this.simpan.nama_wali = '';
         }
     }
 }

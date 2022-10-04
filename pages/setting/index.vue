@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Setting from '@/components/Setting'
+import Setting from '@/components/pages/setting/Setting'
 export default {
     head: {
         title: "Setting - Adminisantri",
