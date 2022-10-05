@@ -13,32 +13,38 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row mt-2">
-                                <div class="col-sm-6" style="padding-top:0.5em;">
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
-                                    </div>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-sm-6 col-md-4">
+                                    <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
                                 </div>
-                                <div class="col-sm-6">
-                                    <button style="display:block; width:100%;" class="btn btn-primary ml-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                                <div class="col-md-4 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-primary btn-sm btn-icon d-md-none" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                                        <i class="mdi mdi-plus-circle"></i>
+                                    </button>
+                                    <button class="btn btn-primary d-none d-md-block" data-bs-toggle="modal" data-bs-target="#addRowModal">
                                         Tambah Kelas
                                     </button>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <div class="table-responsive">
+                                    <div v-if="loading" class="loading-page d-flex justify-content-center">
+                                        <div>
+                                            <img src="~/assets/images/loading.gif" alt="Loading">
+                                        </div>
+                                    </div>
+                                    <div v-else class="table-responsive">
                                         <table id="add-row" class="table table-hover" >
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Nama</th>
-                                                    <th class="text-center">Action</th>
+                                                    <th class="text-center w-50">Nama</th>
+                                                    <th class="text-center w-50">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody v-for="(row,index) in filteredRows" :key="index">
                                                 <tr>
-                                                    <td class="text-center">{{ row.nama }}</td>
-                                                    <td>
+                                                    <td class="text-center w-50">{{ row.nama }}</td>
+                                                    <td class="text-center w-50">
                                                         <div class="text-center">
                                                             <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
                                                                 <i class="mdi mdi-eye"></i>
@@ -155,6 +161,7 @@ export default {
     ],
     data() {
       return {
+        loading: false,
         filter: '',
         rows: [],
         kelas: [],
@@ -192,6 +199,7 @@ export default {
     },
     methods: {
         initialize() {
+            this.loading = true
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
             const apiURL = baseURL + '/api/kelas'
@@ -205,9 +213,11 @@ export default {
             ).then(response => {
                 this.kelas = response.data.data
                 this.rows = this.kelas
+                this.loading = false
             })
             .catch(error => {
                 console.log(error)
+                this.loading = false
             })
         },
         save(e) {

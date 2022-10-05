@@ -13,16 +13,19 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row mt-2">
-                                <div class="col-sm-6">
-                                    <button style="display:block; width:100%;" class="btn btn-primary ml-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                            <div class="d-flex justify-content-between">
+                                <div class="col-sm-6 col-md-4">
+                                    <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
+                                </div>
+                                <div class="col-md-4 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-primary btn-sm btn-icon d-md-none" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                                        <i class="mdi mdi-plus-circle"></i>
+                                    </button>
+                                    <button class="btn btn-primary d-none d-md-block" data-bs-toggle="modal" data-bs-target="#addRowModal">
                                         Tambah Rekening
                                     </button>
-                                </div>
-                                <div class="col-sm-6" style="padding-top:0.5em;">
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
-                                    </div>
+                                    <NuxtLink class="btn btn-info btn-sm btn-icon d-md-none ms-2" to="/rekening/item"><i class="mdi mdi-file-document-box"></i></NuxtLink>
+                                    <NuxtLink class="btn btn-info ml-auto d-none d-md-block ms-2" to="/rekening/item">Daftar Item</NuxtLink>
                                 </div>
                             </div>
                             <div class="row">
