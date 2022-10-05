@@ -30,24 +30,34 @@
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <div class="table-responsive">
+                                    <div v-if="loading" class="loading-page d-flex justify-content-center">
+                                        <div>
+                                            <img src="~/assets/images/loading.gif" alt="Loading">
+                                        </div>
+                                    </div>
+                                    <div v-else class="table-responsive">
                                         <table id="add-row" class="display table table-head-bg-primary table-hover" >
                                             <thead>
                                                 <tr>
                                                     <th>Nama</th>
-                                                    <th style="width: 20%">Action</th>
+                                                    <th>Jenis</th>
+                                                    <th class="text-center" style="width: 20%">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody v-for="(row,index) in filteredRows" :key="index">
                                                 <tr>
                                                     <td>{{ row.nama }}</td>
+                                                    <td>{{ row.jenis }}</td>
                                                     <td>
-                                                        <div class="form-button-action">
-                                                            <button type="button" @click="editRow(row.combinedId)" data-toggle="modal" data-target="#editRowModal" class="btn btn-sm btn-primary" style="margin-right:2.5px" data-original-title="Edit Barang">
-                                                                Edit
+                                                        <div class="text-center">
+                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
+                                                                <i class="mdi mdi-eye"></i>
                                                             </button>
-                                                            <button type="button" @click="deleteRow(row.combinedId, index)" data-toggle="tooltip" title="" class="btn btn-sm btn-danger" data-original-title="Remove">
-                                                                Hapus
+                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row.id)" data-toggle="modal" data-target="#editRowModal">
+                                                                <i class="mdi mdi-lead-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row.id, index)" data-toggle="tooltip" title="">
+                                                                <i class="mdi mdi-delete"></i> 
                                                             </button>
                                                         </div>
                                                     </td>
@@ -77,14 +87,14 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Jenjang Rekening</label>
-                                                    <input id="jenjang" type="text" class="form-control" v-model="simpan.jenjang" placeholder="7" required>
+                                                    <label>Nama Rekening</label>
+                                                    <input id="nama" type="text" class="form-control" v-model="simpan.nama" placeholder="Syahriah Bulanan Kelas 7" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 pr-0">
                                                 <div class="form-group">
-                                                    <label>Nama Ruang Rekening</label>
-                                                    <input id="ruang" type="text" class="form-control" v-model="simpan.ruang" placeholder="A" required>
+                                                    <label>Jenis Rekening</label>
+                                                    <input id="jenis" type="text" class="form-control" v-model="simpan.jenis" placeholder="Bulanan" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -143,6 +153,7 @@ export default {
     ],
     data() {
       return {
+        loading: false,
         filter: '',
         rows: [],
         rekening: [],
@@ -173,18 +184,17 @@ export default {
         filteredRows() {
             return this.rows.filter(row => {
                 const nama = row.nama.toLowerCase();
-                const alamat = row.alamat.toString().toLowerCase();
-                const telepon = row.telepon.toLowerCase();
+                const jenis = row.jenis.toString().toLowerCase();
                 const searchTerm = this.filter.toLowerCase();
 
                 return nama.includes(searchTerm) || 
-                alamat.includes(searchTerm) ||
-                telepon.includes(searchTerm);
+                jenis.includes(searchTerm);
             });
         }
     },
     methods: {
         initialize() {
+            this.loading = true
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
             const apiURL = baseURL + '/api/rekening'
@@ -198,9 +208,11 @@ export default {
             ).then(response => {
                 this.rekening = response.data.data
                 this.rows = this.rekening
+                this.loading = false
             })
             .catch(error => {
                 console.log(error)
+                this.loading = false
             })
         },
         save(e) {
@@ -212,9 +224,8 @@ export default {
 
             this.$axios.post(apiURL, {
                 //data yang dikirim ke server
-                jenjang: this.simpan.jenjang,
-                ruang: this.simpan.ruang,
-                tahun_pelajaran_id: 2
+                nama: this.simpan.nama,
+                jenis: this.simpan.jenis
                 },{
                 headers: {
                     'Authorization': token
@@ -227,13 +238,15 @@ export default {
                     $('#addRowModal').modal('toggle');
                 })
                 .catch(error => {
-                    //assign validation  
                     this.validation = error.response.data
                 })
         },
+        show(id) {
+            this.$router.push('/rekening/'+id);
+        },
         clearInput() {
-            this.simpan.jenjang = '';
-            this.simpan.ruang = '';
+            this.simpan.nama = '';
+            this.simpan.jenis = '';
         }
     }
 }
