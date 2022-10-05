@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="pagetitle">
-        <h1 class="display-3">Kelas</h1>
+        <h1 class="display-3">Rincian Rekening</h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><NuxtLink to="/">Home</NuxtLink></li>
-            <li class="breadcrumb-item"><NuxtLink to="/kelas">Kelas</NuxtLink></li>
-            <li class="breadcrumb-item active">Detail</li>
+            <li class="breadcrumb-item"><NuxtLink to="/rincian">Rekening</NuxtLink></li>
+            <li class="breadcrumb-item active">Rincian</li>
         </ol>
         </div><!-- End Page Title -->
 
@@ -15,7 +15,7 @@
                     <div class="col-md-6 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
-                            <h4 class="card-title">Nama Kelas</h4>
+                            <h4 class="card-title">Nama Rekening</h4>
                             <div class="media">
                                 <i class="mdi mdi-domain icon-lg text-info d-flex align-self-start me-3"></i>
                                 <div class="media-body">
@@ -28,7 +28,7 @@
                     <div class="col-md-6 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
-                            <h4 class="card-title">Jumlah Santri</h4>
+                            <h4 class="card-title">Total Biaya</h4>
                             <div class="media">
                                 <i class="mdi mdi-account-box-outline icon-lg text-info d-flex align-self-center me-3"></i>
                                 <div class="media-body">
@@ -44,21 +44,32 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="col-sm-6 col-md-4">
+                                            <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
+                                        </div>
+                                        <div class="col-md-4 d-flex justify-content-end">
+                                            <button type="button" class="btn btn-primary btn-sm btn-icon d-md-none" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                                                <i class="mdi mdi-plus-circle"></i>
+                                            </button>
+                                            <button class="btn btn-primary d-none d-md-block" data-bs-toggle="modal" data-bs-target="#addRowModal">
+                                                Tambah Item
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table id="add-row" class="table table-hover" >
                                             <thead>
                                                 <tr>
                                                     <th>Nama</th>
-                                                    <th>Alamat</th>
-                                                    <th>Nama Wali</th>
+                                                    <th>Harga</th>
                                                     <th class="text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody v-for="(row,index) in filteredRows" :key="index">
                                                 <tr>
                                                     <td>{{ row.nama }}</td>
-                                                    <td>{{ row.alamat }}</td>
-                                                    <td>{{ row.nama_wali }}</td>
+                                                    <td>{{ row.harga }}</td>
                                                     <td>
                                                         <div class="text-center">
                                                             <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
@@ -85,28 +96,34 @@
                                     <div class="modal-header no-bd">
                                         <h5 class="modal-title">
                                             <span class="fw-mediumbold">
-                                            Kelas</span> 
+                                            Tambah</span> 
                                             <span class="fw-light">
-                                                Baru
+                                                Rincian
                                             </span>
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <form @submit.prevent="save" autocomplete="off">
                                     <div class="modal-body">
-                                        <p class="small">Isi semua kolom berikut ini</p>
+                                        <p class="small">Silakan pilih item yang akan ditambahkan</p>
                                         <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Jenjang Kelas</label>
-                                                    <input id="jenjang" type="text" class="form-control" v-model="simpan.jenjang" placeholder="7" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 pr-0">
-                                                <div class="form-group">
-                                                    <label>Nama Ruang Kelas</label>
-                                                    <input id="ruang" type="text" class="form-control" v-model="simpan.ruang" placeholder="A" required>
-                                                </div>
+                                            <div class="col-12">
+                                                <multiselect
+                                                    v-model="selected"
+                                                    :options="items"
+                                                    :multiple="true"
+                                                    :close-on-select="false"
+                                                    :clear-on-select="false"
+                                                    :hide-selected="true"
+                                                    :preserve-search="true"
+                                                    placeholder="Pilih Item"
+                                                    :custom-label="customLabel" 
+                                                    track-by="nama"
+                                                    :preselect-first="false"
+                                                    id="multi"
+                                                    @input="reload"
+                                                    >
+                                                </multiselect>
                                             </div>
                                         </div>
                                     </div>
@@ -169,32 +186,35 @@
 .modal-backdrop {z-index: 1000 !important;}
 </style>
 <script>
+import Multiselect from 'vue-multiselect'
 import axios from 'axios'
 export default {
     modules: [
         '@nuxtjs/axios',
     ],
+    components: { Multiselect },
     data() {
       return {
         filter: '',
         jumlah_santri: 0,
         rows: [],
+        items: [],
+        rekenings: [],
+        selected: [],
         kelas: {},
         simpan: {
-            tapel: '',
-            jenjang: '',
-            ruang: '',
+            rekening_id: '',
+            item_id: ''
         },
         edit: {
-            combinedId: '',
-            nama: '',
-            jenjang: '',
-            ruang: '',
+            rekening_id: '',
+            item_id: ''
         }
       }
     },
     created(){
-        this.kelasId = this.$route.params.id;
+        this.rekeningId = this.$route.params.id;
+        this.simpan.rekening_id = this.rekeningId;
     },
     mounted() {
 		this.initialize();
@@ -205,13 +225,11 @@ export default {
         filteredRows() {
             return this.rows.filter(row => {
                 const nama = row.nama.toLowerCase();
-                const alamat = row.alamat.toString().toLowerCase();
-                const nama_wali = row.nama_wali.toLowerCase();
+                const harga = row.harga.toString().toLowerCase();
                 const searchTerm = this.filter.toLowerCase();
 
                 return nama.includes(searchTerm) || 
-                alamat.includes(searchTerm) ||
-                nama_wali.includes(searchTerm);
+                harga.includes(searchTerm);
             });
         }
     },
@@ -219,31 +237,30 @@ export default {
         initialize() {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const kelas = baseURL + '/api/kelas/' + this.kelasId
-            const santri = baseURL + '/api/santri/kelas/' + this.kelasId
+            const rekening = baseURL + '/api/rekening/' + this.rekeningId
+            const item = baseURL + '/api/item'
 
-            axios.get(kelas, {
+            axios.get(rekening, {
                 headers: {
                     'Authorization': token,
                     'Accept': 'application/json'
                 }
             }
             ).then(response => {
-                this.kelas = response.data.data
+                this.rekening = response.data.data
             })
             .catch(error => {
                 console.log(error)
             })
 
-            axios.get(santri, {
+            axios.get(item, {
                 headers: {
                     'Authorization': token,
                     'Accept': 'application/json'
                 }
             }
             ).then(response => {
-                this.rows = response.data.data
-                this.jumlah_santri = this.rows.length
+                this.items = response.data.data
             })
             .catch(error => {
                 console.log(error)
@@ -252,14 +269,14 @@ export default {
         save(e) {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/kelas'
+            const apiURL = baseURL + '/api/rincian-rekening'
 
             e.preventDefault()
 
             this.$axios.post(apiURL, {
                 //data yang dikirim ke server
-                jenjang: this.simpan.jenjang,
-                ruang: this.simpan.ruang,
+                jenjang: this.simpan.rekening_id,
+                ruang: this.simpan.item_id,
                 tahun_pelajaran_id: 2
                 },{
                 headers: {
@@ -320,7 +337,13 @@ export default {
         clearInput() {
             this.simpan.jenjang = '';
             this.simpan.ruang = '';
+        },
+        customLabel ({ nama, harga }) {
+            let number = Number(harga)
+            let formatted = number.toLocaleString('id', { style: 'currency', currency: 'IDR' })
+            return `${nama} – ${formatted}`
         }
     }
 }
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
