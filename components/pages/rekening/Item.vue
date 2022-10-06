@@ -4,7 +4,6 @@
         <h1 class="display-3">Item</h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><NuxtLink to="/">Home</NuxtLink></li>
-            <li class="breadcrumb-item"><NuxtLink to="/rekening">Rekening</NuxtLink></li>
             <li class="breadcrumb-item active">Item</li>
         </ol>
         </div><!-- End Page Title -->

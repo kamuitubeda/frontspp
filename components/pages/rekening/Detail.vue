@@ -53,6 +53,12 @@
                                             <button class="btn btn-primary d-none d-md-block" data-bs-toggle="modal" data-bs-target="#addRowModal">
                                                 Tambah Item
                                             </button>
+                                            <button type="button" class="btn btn-danger btn-sm btn-icon d-md-none ms-2" data-bs-toggle="modal" data-bs-target="#removeRowModal">
+                                                <i class="mdi mdi-minus-circle"></i>
+                                            </button>
+                                            <button class="btn btn-danger d-none d-md-block ms-2" data-bs-toggle="modal" data-bs-target="#removeRowModal" @click="initEdit">
+                                                Hapus Item
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -61,26 +67,12 @@
                                                 <tr>
                                                     <th>Nama</th>
                                                     <th>Harga</th>
-                                                    <th class="text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody v-for="(row,index) in filteredRows" :key="index">
                                                 <tr>
                                                     <td>{{ row.nama_item }}</td>
                                                     <td>{{ harga(Number(row.harga)) }}</td>
-                                                    <td>
-                                                        <div class="text-center">
-                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
-                                                                <i class="mdi mdi-eye"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
-                                                                <i class="mdi mdi-lead-pencil"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row.combinedId, index)" data-toggle="tooltip" title="">
-                                                                <i class="mdi mdi-delete"></i> 
-                                                            </button>
-                                                        </div>
-                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -132,7 +124,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal fade" id="editRowModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal fade" id="removeRowModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header no-bd">
@@ -144,28 +136,33 @@
                                                 Kelas
                                             </span> 
                                         </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="clearEditInput"></button>
                                     </div>
-                                    <form @submit.prevent="update">
+                                    <form @submit.prevent="remove">
                                     <div class="modal-body">
                                         <p class="small">Isi semua kolom berikut ini</p>
                                         <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <label>Jenjang Kelas</label>
-                                                    <input id="editNamaPelanggan" type="text" class="form-control" v-model="edit.jenjang" />
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <label>Ruang Kelas</label>
-                                                    <input id="editPhonePelanggan" type="text" class="form-control" v-model="edit.ruang" />
-                                                </div>
+                                            <div class="col-12">
+                                                <multiselect
+                                                    v-model="selected"
+                                                    :options="selectedOptions"
+                                                    :multiple="true"
+                                                    :close-on-select="false"
+                                                    :clear-on-select="false"
+                                                    :hide-selected="true"
+                                                    :preserve-search="true"
+                                                    placeholder="Pilih Item"
+                                                    :custom-label="customLabel" 
+                                                    track-by="nama"
+                                                    :preselect-first="false"
+                                                    id="multi"
+                                                    >
+                                                </multiselect>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer no-bd">
-                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="clearEditInput">Batal</button>
                                         <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
                                     </div>
                                     </form>
@@ -198,6 +195,8 @@ export default {
         rows: [],
         items: [],
         options: [],
+        baseOptions: [],
+        selectedOptions: [],
         rekening: [],
         selected: [],
         kelas: {},
@@ -263,7 +262,8 @@ export default {
             }
             ).then(response => {
                 this.items = response.data.data;
-                this.options = this.items.filter(arr1Item => !this.rows.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
+                this.options = this.items.filter(arr1Item => !this.rekening.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
+                this.selectedOptions = this.items.filter(arr1Item => this.rekening.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
             })
             .catch(error => {
                 console.log(error)
@@ -291,42 +291,27 @@ export default {
             this.selected = [];
             this.initialize();
         },
-        editRow(item) {
-            this.edit = item;
-            $('#editRowModal').modal('show');
+        initEdit() {
+            this.baseOptions = this.selectedOptions
+            this.selected = this.selectedOptions
         },
-        deleteRow(item, index) {
+        remove(e) {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/kelas/' + item.id
+            const apiURL = baseURL + '/api/rincian-rekening/r/' + this.rekeningId + '/i/'
 
-            this.$swal.fire({
-                title: 'Hapus data kelas?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: `Hapus`,
-                cancelButtonText: `Batal`,
-            }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-                    //send data ke Rest API
-                    this.$axios.delete(apiURL, {
-                        headers: {
-                            'Authorization': token
-                        }
-                    })
-                    .then(() => {
-                        this.kelas.splice(index, 1);
-                        this.initialize();
-                    })
-                    .catch(error => {
-                        //assign validation  
-                        this.validation = error.response.data
-                    })
-                } else if (result.isDenied) {
-                    Swal.fire('Kelas batal dihapus', '', 'info')
-                }
-            })
+            e.preventDefault()
+
+            const removed = this.baseOptions.filter(arr1Item => !this.selected.some(arr2Item => arr2Item.nama == arr1Item.nama));
+
+            removed.forEach(item => {
+                axios.delete(apiURL + item.id,{
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+            });
         },
         harga(number){
             if(number != '' && number != undefined){
@@ -342,6 +327,9 @@ export default {
         clearInput() {
             this.simpan.jenjang = '';
             this.simpan.ruang = '';
+        },
+        clearEditInput() {
+            this.selectedOptions = this.items.filter(arr1Item => this.rekening.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
         },
         customLabel ({ nama, harga }) {
             let number = Number(harga)

@@ -49,10 +49,10 @@
                                                             <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
                                                                 <i class="mdi mdi-eye"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row.id)" data-toggle="modal" data-target="#editRowModal">
+                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row)" data-toggle="modal" data-target="#editRowModal">
                                                                 <i class="mdi mdi-lead-pencil"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row.id, index)" data-toggle="tooltip" title="">
+                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row, index)" data-toggle="tooltip" title="">
                                                                 <i class="mdi mdi-delete"></i> 
                                                             </button>
                                                         </div>
@@ -75,7 +75,7 @@
                                                 Baru
                                             </span>
                                         </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="clearInput"></button>
                                     </div>
                                     <form @submit.prevent="save" autocomplete="off">
                                     <div class="modal-body">
@@ -96,7 +96,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="clearInput">Close</button>
                                         <button type="submit" class="btn btn-primary">Save changes</button>
                                     </div>
                                     </form>
@@ -171,7 +171,7 @@ export default {
             ruang: '',
         },
         edit: {
-            combinedId: '',
+            id: '',
             nama: '',
             jenjang: '',
             ruang: '',
@@ -251,6 +251,33 @@ export default {
         editRow(item) {
             this.edit = item;
             $('#editRowModal').modal('show');
+        },
+        update(e) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/kelas/' + this.edit.id
+
+            e.preventDefault()
+
+            this.$axios.put(apiURL, {
+                //data yang dikirim ke server
+                jenjang: this.edit.jenjang,
+                ruang: this.edit.ruang,
+                tahun_pelajaran_id: 2
+                },{
+                headers: {
+                    'Authorization': token
+                }
+                })
+                .then(() => {
+                    this.clearInput();
+                    this.initialize();
+                    $(':input','#editRowModal').val("");
+                    $('#editRowModal').modal('toggle');
+                })
+                .catch(error => {
+                    this.validation = error.response.data
+                })
         },
         deleteRow(item, index) {
             const token = this.$auth.strategy.token.get()

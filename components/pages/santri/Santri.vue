@@ -54,13 +54,10 @@
                                                     <td>{{ row.nama_wali }}</td>
                                                     <td>
                                                         <div class="text-center">
-                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
-                                                                <i class="mdi mdi-eye"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
+                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row)" data-toggle="modal" data-target="#editRowModal">
                                                                 <i class="mdi mdi-lead-pencil"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row.combinedId, index)" data-toggle="tooltip" title="">
+                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row, index)" data-toggle="tooltip" title="">
                                                                 <i class="mdi mdi-delete"></i> 
                                                             </button>
                                                         </div>
@@ -83,28 +80,54 @@
                                                 Baru
                                             </span>
                                         </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="clearInput"></button>
                                     </div>
                                     <form @submit.prevent="save" autocomplete="off">
                                     <div class="modal-body">
                                         <p class="small">Isi semua kolom berikut ini</p>
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-12">
                                                 <div class="form-group">
-                                                    <label>Jenjang Santri</label>
-                                                    <input id="jenjang" type="text" class="form-control" v-model="simpan.jenjang" placeholder="7" required>
+                                                    <label>Kelas</label>
+                                                    <select v-model="simpan.kelas_id" name="simpan-kelas-id" id="simpan-kelas-id" class="form-control" tabindex="12">
+                                                        <option v-for="(row) in kelas" :key="row.id" :value="row.id">Kelas {{ row.nama }}</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 pr-0">
+                                            <div class="col-12">
                                                 <div class="form-group">
-                                                    <label>Nama Ruang Santri</label>
-                                                    <input id="ruang" type="text" class="form-control" v-model="simpan.ruang" placeholder="A" required>
+                                                    <label>Nomor Induk</label>
+                                                    <input id="simpan-nomor-induk" type="text" class="form-control" v-model="simpan.nomor_induk" placeholder="7" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Nama</label>
+                                                    <input id="simpan-nama" type="text" class="form-control" v-model="simpan.nama" placeholder="A" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Alamat</label>
+                                                    <input id="simpan-alamat" type="text" class="form-control" v-model="simpan.alamat" placeholder="A" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Nomor Telepon</label>
+                                                    <input id="simpan-telepon" type="number" class="form-control" v-model="simpan.telepon" placeholder="0812345654321">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Nama Wali</label>
+                                                    <input id="simpan-nama-wali" type="text" class="form-control" v-model="simpan.nama_wali" placeholder="A" required>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="clearInput">Close</button>
                                         <button type="submit" class="btn btn-primary">Save changes</button>
                                     </div>
                                     </form>
@@ -117,21 +140,61 @@
                                     <div class="modal-header no-bd">
                                         <h5 class="modal-title">
                                             <span class="fw-mediumbold">
-                                            Pelanggan</span> 
+                                            Santri</span> 
                                             <span class="fw-light">
                                                 Edit
                                             </span>
                                         </h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <form @submit.prevent="update">
                                     <div class="modal-body">
                                         <p class="small">Isi semua kolom berikut ini</p>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Kelas</label>
+                                                    <select v-model="edit.kelas_id" name="edit-kelas-id" id="edit-kelas-id" class="form-control" tabindex="12">
+                                                        <option v-for="(row) in kelas" :key="row.id" :value="row.id">Kelas {{ row.nama }}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Nomor Induk</label>
+                                                    <input id="edit-nomor-induk" type="text" class="form-control" v-model="edit.nomor_induk" placeholder="20220001" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Nama</label>
+                                                    <input id="edit-nama" type="text" class="form-control" v-model="edit.nama" placeholder="Ahmad Kurniawan" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Alamat</label>
+                                                    <input id="edit-alamat" type="text" class="form-control" v-model="edit.alamat" placeholder="Bangilan - Tuban" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Nomor Telepon</label>
+                                                    <input id="edit-telepon" type="number" class="form-control" v-model="edit.telepon" placeholder="0812345654321">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>Nama Wali</label>
+                                                    <input id="edit-nama-wali" type="text" class="form-control" v-model="edit.nama_wali" placeholder="Adi Wijaya" required>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="modal-footer no-bd">
-                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
                                         <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
                                     </div>
                                     </form>
@@ -167,17 +230,19 @@ export default {
             nomor_induk: '',
             nama: '',
             alamat: '',
+            telepon: '',
             nama_wali: '',
             aktif: 1,
-            Santri: 1,
+            kelas_id: ''
         },
         edit: {
             nomor_induk: '',
             nama: '',
             alamat: '',
+            telepon: '',
             nama_wali: '',
             aktif: 1,
-            Santri: 1,
+            kelas_id: ''
         }
       }
     },
@@ -201,14 +266,12 @@ export default {
             data = data.filter(row => {
                     const nama = row.nama.toLowerCase();
                     const alamat = row.alamat.toString().toLowerCase();
-                    const telepon = row.telepon.toLowerCase();
                     const nomor_induk = row.nomor_induk.toLowerCase();
                     const nama_wali = row.nama_wali.toLowerCase();
                     const searchTerm = this.filter.toLowerCase();
 
                     return nama.includes(searchTerm) || 
                     alamat.includes(searchTerm) ||
-                    telepon.includes(searchTerm) ||
                     nomor_induk.includes(searchTerm) ||
                     nama_wali.includes(searchTerm);
                 });
@@ -268,15 +331,15 @@ export default {
                 telepon: this.simpan.telepon,
                 nama_wali: this.simpan.nama_wali,
                 aktif: 1,
-                kelas_id: 1
+                kelas_id: this.simpan.kelas_id
                 },{
                 headers: {
                     'Authorization': token
                 }
                 })
                 .then(() => {
-                    this.clearInput();
                     this.initialize();
+                    this.clearInput();
                     $(':input','#addRowModal').val("");
                     $('#addRowModal').modal('toggle');
                 })
@@ -285,7 +348,75 @@ export default {
                     this.validation = error.response.data
                 })
         },
+        editRow(item) {
+            this.edit = item;
+            $('#editRowModal').modal('show');
+        },
+        update(e) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/santri/' + this.edit.id
+
+            e.preventDefault()
+
+            this.$axios.put(apiURL, {
+                //data yang dikirim ke server
+                kelas_id: this.edit.kelas_id,
+                nomor_induk: this.edit.nomor_induk,
+                nama: this.edit.nama,
+                alamat: this.edit.alamat,
+                telepon: this.edit.telepon,
+                nama_wali: this.edit.nama_wali,
+                aktif: 1
+                },{
+                headers: {
+                    'Authorization': token
+                }
+                })
+                .then(() => {
+                    this.initialize();
+                    $(':input','#editRowModal').val("");
+                    $('#editRowModal').modal('toggle');
+                })
+                .catch(error => {
+                    this.validation = error.response.data
+                })
+        },
+        deleteRow(item, index) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/santri/' + item.id
+
+            this.$swal.fire({
+                title: 'Hapus data santri?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `Hapus`,
+                cancelButtonText: `Batal`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    //send data ke Rest API
+                    this.$axios.delete(apiURL, {
+                        headers: {
+                            'Authorization': token
+                        }
+                    })
+                    .then(() => {
+                        this.santri.splice(index, 1);
+                        this.initialize();
+                    })
+                    .catch(error => {
+                        //assign validation  
+                        this.validation = error.response.data
+                    })
+                } else if (result.isDenied) {
+                    Swal.fire('Santri batal dihapus', '', 'info')
+                }
+            })
+        },
         clearInput() {
+            this.simpan.kelas_id = '';
             this.simpan.nomor_induk = '';
             this.simpan.nama = '';
             this.simpan.alamat = '';

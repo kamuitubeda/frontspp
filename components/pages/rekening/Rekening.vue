@@ -24,8 +24,8 @@
                                     <button class="btn btn-primary d-none d-md-block" data-bs-toggle="modal" data-bs-target="#addRowModal">
                                         Tambah Rekening
                                     </button>
-                                    <NuxtLink class="btn btn-info btn-sm btn-icon d-md-none ms-2" to="/rekening/item"><i class="mdi mdi-file-document-box"></i></NuxtLink>
-                                    <NuxtLink class="btn btn-info ml-auto d-none d-md-block ms-2" to="/rekening/item">Daftar Item</NuxtLink>
+                                    <NuxtLink class="btn btn-info btn-sm btn-icon d-md-none ms-2" to="/item"><i class="mdi mdi-file-document-box"></i></NuxtLink>
+                                    <NuxtLink class="btn btn-info ml-auto d-none d-md-block ms-2" to="/item">Daftar Item</NuxtLink>
                                 </div>
                             </div>
                             <div class="row">
@@ -53,10 +53,10 @@
                                                             <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
                                                                 <i class="mdi mdi-eye"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row.id)" data-toggle="modal" data-target="#editRowModal">
+                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row)" data-toggle="modal" data-target="#editRowModal">
                                                                 <i class="mdi mdi-lead-pencil"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row.id, index)" data-toggle="tooltip" title="">
+                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row, index)" data-toggle="tooltip" title="">
                                                                 <i class="mdi mdi-delete"></i> 
                                                             </button>
                                                         </div>
@@ -79,7 +79,7 @@
                                                 Baru
                                             </span>
                                         </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="clearInput"></button>
                                     </div>
                                     <form @submit.prevent="save" autocomplete="off">
                                     <div class="modal-body">
@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="clearInput">Close</button>
                                         <button type="submit" class="btn btn-primary">Save changes</button>
                                     </div>
                                     </form>
@@ -113,21 +113,35 @@
                                     <div class="modal-header no-bd">
                                         <h5 class="modal-title">
                                             <span class="fw-mediumbold">
-                                            Pelanggan</span> 
+                                            Edit</span> 
                                             <span class="fw-light">
-                                                Edit
+                                                Rekening
                                             </span>
                                         </h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <form @submit.prevent="update">
                                     <div class="modal-body">
                                         <p class="small">Isi semua kolom berikut ini</p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Nama Rekening</label>
+                                                    <input id="nama" type="text" class="form-control" v-model="edit.nama" placeholder="Syahriah Bulanan Kelas 7" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pr-0">
+                                                <div class="form-group">
+                                                    <label>Jenis Rekening</label>
+                                                    <input id="jenis" type="text" class="form-control" v-model="edit.jenis" placeholder="Bulanan" required>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="modal-footer no-bd">
-                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
                                         <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
                                     </div>
                                     </form>
@@ -158,20 +172,13 @@ export default {
         rows: [],
         rekening: [],
         simpan: {
-            nomor_induk: '',
             nama: '',
-            alamat: '',
-            nama_wali: '',
-            aktif: 1,
-            rekening: 1,
+            jenis: ''
         },
         edit: {
-            nomor_induk: '',
+            id: '',
             nama: '',
-            alamat: '',
-            nama_wali: '',
-            aktif: 1,
-            rekening: 1,
+            jenis: ''
         }
       }
     },
@@ -241,8 +248,69 @@ export default {
                     this.validation = error.response.data
                 })
         },
+        update(e) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/rekening/' + this.edit.id
+
+            e.preventDefault()
+
+            this.$axios.put(apiURL, {
+                nama: this.edit.nama,
+                jenis: this.edit.jenis,
+                },{
+                headers: {
+                    'Authorization': token
+                }
+                })
+                .then(() => {
+                    this.initialize();
+                    $(':input','#editRowModal').val("");
+                    $('#editRowModal').modal('toggle');
+                })
+                .catch(error => {
+                    this.validation = error.response.data
+                })
+        },
+        deleteRow(item, index) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/rekening/' + item.id
+
+            this.$swal.fire({
+                title: 'Hapus data rekening?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `Hapus`,
+                cancelButtonText: `Batal`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    //send data ke Rest API
+                    this.$axios.delete(apiURL, {
+                        headers: {
+                            'Authorization': token
+                        }
+                    })
+                    .then(() => {
+                        this.rekening.splice(index, 1);
+                        this.initialize();
+                    })
+                    .catch(error => {
+                        //assign validation  
+                        this.validation = error.response.data
+                    })
+                } else if (result.isDenied) {
+                    Swal.fire('Rekening batal dihapus', '', 'info')
+                }
+            })
+        },
         show(id) {
             this.$router.push('/rekening/'+id);
+        },
+        editRow(item) {
+            this.edit = item;
+            $('#editRowModal').modal('show');
         },
         clearInput() {
             this.simpan.nama = '';

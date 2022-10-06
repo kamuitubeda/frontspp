@@ -26,6 +26,12 @@
                 <span class="menu-title">Rekening</span>
                 </NuxtLink>
             </li>
+            <li class="nav-item" :class="{ 'active': currentPage === 'item'}">
+                <NuxtLink class="nav-link" to="/item">
+                <i class="mdi mdi-checkbox-multiple-blank menu-icon"></i>
+                <span class="menu-title">Item</span>
+                </NuxtLink>
+            </li>
             <li class="nav-item" :class="{ 'active': currentPage === 'tagihan'}">
                 <NuxtLink class="nav-link" to="/tagihan">
                 <i class="mdi mdi-email menu-icon"></i>
