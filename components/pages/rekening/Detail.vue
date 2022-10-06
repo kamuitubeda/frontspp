@@ -4,38 +4,36 @@
         <h1 class="display-3">Rincian Rekening</h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><NuxtLink to="/">Home</NuxtLink></li>
-            <li class="breadcrumb-item"><NuxtLink to="/rincian">Rekening</NuxtLink></li>
+            <li class="breadcrumb-item"><NuxtLink to="/rekening">Rekening</NuxtLink></li>
             <li class="breadcrumb-item active">Rincian</li>
         </ol>
         </div><!-- End Page Title -->
 
         <section class="section dashboard">
             <div class="row">
-                <div class="row">
-                    <div class="col-md-6 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                            <h4 class="card-title">Nama Rekening</h4>
-                            <div class="media">
-                                <i class="mdi mdi-domain icon-lg text-info d-flex align-self-start me-3"></i>
-                                <div class="media-body">
-                                    <p class="display-3">{{kelas.nama}}</p>
-                                </div>
-                            </div>
+                <div class="col-md-6 grid-margin">
+                    <div class="card">
+                        <div class="card-body">
+                        <h4 class="card-title">Nama Rekening</h4>
+                        <div class="media">
+                            <i class="mdi mdi-domain icon-lg text-info d-flex align-self-start me-3"></i>
+                            <div class="media-body">
+                                <p class="display-3">{{nama}}</p>
                             </div>
                         </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                            <h4 class="card-title">Total Biaya</h4>
-                            <div class="media">
-                                <i class="mdi mdi-account-box-outline icon-lg text-info d-flex align-self-center me-3"></i>
-                                <div class="media-body">
-                                    <p class="display-3">{{jumlah_santri}}</p>
-                                </div>
+                </div>
+                <div class="col-md-6 grid-margin">
+                    <div class="card">
+                        <div class="card-body">
+                        <h4 class="card-title">Total Biaya</h4>
+                        <div class="media">
+                            <i class="mdi mdi-account-box-outline icon-lg text-info d-flex align-self-center me-3"></i>
+                            <div class="media-body">
+                                <p class="display-3">{{harga(total)}}</p>
                             </div>
-                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -68,8 +66,8 @@
                                             </thead>
                                             <tbody v-for="(row,index) in filteredRows" :key="index">
                                                 <tr>
-                                                    <td>{{ row.nama }}</td>
-                                                    <td>{{ row.harga }}</td>
+                                                    <td>{{ row.nama_item }}</td>
+                                                    <td>{{ harga(Number(row.harga)) }}</td>
                                                     <td>
                                                         <div class="text-center">
                                                             <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.combinedId)" data-toggle="modal" data-target="#editRowModal">
@@ -110,7 +108,7 @@
                                             <div class="col-12">
                                                 <multiselect
                                                     v-model="selected"
-                                                    :options="items"
+                                                    :options="options"
                                                     :multiple="true"
                                                     :close-on-select="false"
                                                     :clear-on-select="false"
@@ -121,7 +119,6 @@
                                                     track-by="nama"
                                                     :preselect-first="false"
                                                     id="multi"
-                                                    @input="reload"
                                                     >
                                                 </multiselect>
                                             </div>
@@ -196,10 +193,12 @@ export default {
     data() {
       return {
         filter: '',
-        jumlah_santri: 0,
+        nama: '',
+        total: 0,
         rows: [],
         items: [],
-        rekenings: [],
+        options: [],
+        rekening: [],
         selected: [],
         kelas: {},
         simpan: {
@@ -224,11 +223,11 @@ export default {
     computed: {
         filteredRows() {
             return this.rows.filter(row => {
-                const nama = row.nama.toLowerCase();
+                const nama_item = row.nama_item.toLowerCase();
                 const harga = row.harga.toString().toLowerCase();
                 const searchTerm = this.filter.toLowerCase();
 
-                return nama.includes(searchTerm) || 
+                return nama_item.includes(searchTerm) || 
                 harga.includes(searchTerm);
             });
         }
@@ -237,7 +236,7 @@ export default {
         initialize() {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const rekening = baseURL + '/api/rekening/' + this.rekeningId
+            const rekening = baseURL + '/api/item/rekening/' + this.rekeningId
             const item = baseURL + '/api/item'
 
             axios.get(rekening, {
@@ -248,6 +247,9 @@ export default {
             }
             ).then(response => {
                 this.rekening = response.data.data
+                this.total = this.rekening.reduce((n, {harga}) => n + Number(harga), 0)
+                this.rows = this.rekening
+                this.nama = this.rekening[0].nama
             })
             .catch(error => {
                 console.log(error)
@@ -260,7 +262,8 @@ export default {
                 }
             }
             ).then(response => {
-                this.items = response.data.data
+                this.items = response.data.data;
+                this.options = this.items.filter(arr1Item => !this.rows.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
             })
             .catch(error => {
                 console.log(error)
@@ -273,26 +276,20 @@ export default {
 
             e.preventDefault()
 
-            this.$axios.post(apiURL, {
-                //data yang dikirim ke server
-                jenjang: this.simpan.rekening_id,
-                ruang: this.simpan.item_id,
-                tahun_pelajaran_id: 2
+            this.selected.forEach(item => {
+                axios.post(apiURL, {
+                    rekening_id: this.simpan.rekening_id,
+                    item_id: item.id
                 },{
-                headers: {
-                    'Authorization': token
-                }
-                })
-                .then(() => {
-                    this.clearInput();
-                    this.initialize();
-                    $(':input','#addRowModal').val("");
-                    $('#addRowModal').modal('toggle');
-                })
-                .catch(error => {
-                    //assign validation  
-                    this.validation = error.response.data
-                })
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+            });
+
+            $('#addRowModal').modal('toggle');
+            this.selected = [];
+            this.initialize();
         },
         editRow(item) {
             this.edit = item;
@@ -330,6 +327,14 @@ export default {
                     Swal.fire('Kelas batal dihapus', '', 'info')
                 }
             })
+        },
+        harga(number){
+            if(number != '' && number != undefined){
+                return number.toLocaleString('id', { style: 'currency', currency: 'IDR' })
+            }else{
+                return "-"
+            }
+            
         },
         show(id) {
             this.$router.push('/'+id);
