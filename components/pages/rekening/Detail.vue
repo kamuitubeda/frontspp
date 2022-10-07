@@ -18,7 +18,7 @@
                         <div class="media">
                             <i class="mdi mdi-domain icon-lg text-info d-flex align-self-start me-3"></i>
                             <div class="media-body">
-                                <p class="display-3">{{nama}}</p>
+                                <p class="display-3">{{selectedRekening.nama}}</p>
                             </div>
                         </div>
                         </div>
@@ -61,7 +61,12 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="table-responsive">
+                                    <div v-if="loading" class="loading-page d-flex justify-content-center">
+                                        <div>
+                                            <img src="~/assets/images/loading.gif" alt="Loading">
+                                        </div>
+                                    </div>
+                                    <div v-else class="table-responsive">
                                         <table id="add-row" class="table table-hover" >
                                             <thead>
                                                 <tr>
@@ -69,8 +74,8 @@
                                                     <th>Harga</th>
                                                 </tr>
                                             </thead>
-                                            <tbody v-for="(row,index) in filteredRows" :key="index">
-                                                <tr>
+                                            <tbody>
+                                                <tr v-for="(row,index) in filteredRows" :key="index">
                                                     <td>{{ row.nama_item }}</td>
                                                     <td>{{ harga(Number(row.harga)) }}</td>
                                                 </tr>
@@ -189,8 +194,9 @@ export default {
     components: { Multiselect },
     data() {
       return {
+        loading: false,
         filter: '',
-        nama: '',
+        selectedRekening: {},
         total: 0,
         rows: [],
         items: [],
@@ -234,11 +240,26 @@ export default {
     },
     methods: {
         initialize() {
+            this.loading = true;
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
+            const detail = baseURL + '/api/rekening/' + this.rekeningId
             const rekening = baseURL + '/api/item/rekening/' + this.rekeningId
             const selectAPI = baseURL + '/api/item/selected/' + this.rekeningId
             const optionAPI = baseURL + '/api/item/option/' + this.rekeningId
+
+            axios.get(detail, {
+                headers: {
+                    'Authorization': token,
+                    'Accept': 'application/json'
+                }
+            }
+            ).then(response => {
+                this.selectedRekening = response.data.data
+            })
+            .catch(error => {
+                console.log(error)
+            })
 
             axios.get(rekening, {
                 headers: {
@@ -250,7 +271,6 @@ export default {
                 this.rekening = response.data.data
                 this.total = this.rekening.reduce((n, {harga}) => n + Number(harga), 0)
                 this.rows = this.rekening
-                this.nama = this.rekening[0].nama
             })
             .catch(error => {
                 console.log(error)
@@ -282,6 +302,8 @@ export default {
             .catch(error => {
                 console.log(error)
             })
+
+            this.loading = false;
         },
         save(e) {
             const token = this.$auth.strategy.token.get()
@@ -290,20 +312,27 @@ export default {
 
             e.preventDefault()
 
-            this.selected.forEach(item => {
+            this.selected.forEach((item, index) => {
                 axios.post(apiURL, {
-                    rekening_id: this.simpan.rekening_id,
+                    rekening_id: this.rekeningId,
                     item_id: item.id
                 },{
                     headers: {
                         'Authorization': token
                     }
+                }).then(response => {
+                    if (index == this.selected.length - 1) { 
+                        $('#addRowModal').modal('toggle');
+                        this.selected = [];
+                        this.initialize();
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
                 });
             });
 
-            $('#addRowModal').modal('toggle');
-            this.selected = [];
-            this.initialize();
+            
         },
         initEdit() {
             this.selectedItems = this.selectedOptions
@@ -317,17 +346,22 @@ export default {
 
             const removed = this.baseOptions.filter(arr1Item => !this.selectedItems.some(arr2Item => arr2Item.nama == arr1Item.nama));
 
-            removed.forEach(item => {
+            removed.forEach((item, index) => {
                 axios.delete(apiURL + item.id,{
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': token
                     }
+                }).then(response => {
+                    if (index == removed.length - 1) { 
+                        $('#removeRowModal').modal('toggle');
+                        this.initialize();
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
                 });
             });
-
-            $('#removeRowModal').modal('toggle');
-            this.initialize();
         },
         harga(number){
             if(number != '' && number != undefined){

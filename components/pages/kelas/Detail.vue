@@ -19,7 +19,7 @@
                             <div class="media">
                                 <i class="mdi mdi-domain icon-lg text-info d-flex align-self-start me-3"></i>
                                 <div class="media-body">
-                                    <p class="display-3">{{kelas.nama}}</p>
+                                    <p class="display-3">{{kelasTerpilih.nama}}</p>
                                 </div>
                             </div>
                             </div>
@@ -67,8 +67,8 @@
                                                     <th class="text-center">Action</th>
                                                 </tr>
                                             </thead>
-                                            <tbody v-for="(row,index) in filteredRows" :key="index">
-                                                <tr>
+                                            <tbody>
+                                                <tr v-for="(row,index) in filteredRows" :key="index">
                                                     <td>{{ row.nama }}</td>
                                                     <td>{{ row.alamat }}</td>
                                                     <td>{{ row.nama_wali }}</td>

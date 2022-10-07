@@ -41,8 +41,8 @@
                                                     <th class="text-center w-50">Action</th>
                                                 </tr>
                                             </thead>
-                                            <tbody v-for="(row,index) in filteredRows" :key="index">
-                                                <tr>
+                                            <tbody>
+                                                <tr v-for="(row,index) in filteredRows" :key="index">
                                                     <td class="text-center w-50">{{ row.nama }}</td>
                                                     <td class="text-center w-50">
                                                         <div class="text-center">

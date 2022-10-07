@@ -45,8 +45,8 @@
                                                     <th class="text-center" style="width: 20%">Action</th>
                                                 </tr>
                                             </thead>
-                                            <tbody v-for="(row,index) in filteredRows" :key="index">
-                                                <tr>
+                                            <tbody>
+                                                <tr v-for="(row,index) in filteredRows" :key="index">
                                                     <td>{{ row.nama }}</td>
                                                     <td>{{ row.jenis }}</td>
                                                     <td>{{ harga(Number(row.total)) }}</td>
