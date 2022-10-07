@@ -136,7 +136,7 @@
                                                 Kelas
                                             </span> 
                                         </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="clearEditInput"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <form @submit.prevent="remove">
                                     <div class="modal-body">
@@ -144,7 +144,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <multiselect
-                                                    v-model="selected"
+                                                    v-model="selectedItems"
                                                     :options="selectedOptions"
                                                     :multiple="true"
                                                     :close-on-select="false"
@@ -162,7 +162,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer no-bd">
-                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="clearEditInput">Batal</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
                                         <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
                                     </div>
                                     </form>
@@ -199,6 +199,7 @@ export default {
         selectedOptions: [],
         rekening: [],
         selected: [],
+        selectedItems: [],
         kelas: {},
         simpan: {
             rekening_id: '',
@@ -236,7 +237,8 @@ export default {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
             const rekening = baseURL + '/api/item/rekening/' + this.rekeningId
-            const item = baseURL + '/api/item'
+            const selectAPI = baseURL + '/api/item/selected/' + this.rekeningId
+            const optionAPI = baseURL + '/api/item/option/' + this.rekeningId
 
             axios.get(rekening, {
                 headers: {
@@ -254,16 +256,28 @@ export default {
                 console.log(error)
             })
 
-            axios.get(item, {
+            axios.get(selectAPI, {
                 headers: {
                     'Authorization': token,
                     'Accept': 'application/json'
                 }
             }
             ).then(response => {
-                this.items = response.data.data;
-                this.options = this.items.filter(arr1Item => !this.rekening.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
-                this.selectedOptions = this.items.filter(arr1Item => this.rekening.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
+                this.selectedOptions = response.data.data;
+                this.baseOptions = this.selectedOptions;
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
+            axios.get(optionAPI, {
+                headers: {
+                    'Authorization': token,
+                    'Accept': 'application/json'
+                }
+            }
+            ).then(response => {
+                this.options = response.data.data;
             })
             .catch(error => {
                 console.log(error)
@@ -292,8 +306,7 @@ export default {
             this.initialize();
         },
         initEdit() {
-            this.baseOptions = this.selectedOptions
-            this.selected = this.selectedOptions
+            this.selectedItems = this.selectedOptions
         },
         remove(e) {
             const token = this.$auth.strategy.token.get()
@@ -302,7 +315,7 @@ export default {
 
             e.preventDefault()
 
-            const removed = this.baseOptions.filter(arr1Item => !this.selected.some(arr2Item => arr2Item.nama == arr1Item.nama));
+            const removed = this.baseOptions.filter(arr1Item => !this.selectedItems.some(arr2Item => arr2Item.nama == arr1Item.nama));
 
             removed.forEach(item => {
                 axios.delete(apiURL + item.id,{
@@ -312,6 +325,9 @@ export default {
                     }
                 });
             });
+
+            $('#removeRowModal').modal('toggle');
+            this.initialize();
         },
         harga(number){
             if(number != '' && number != undefined){
@@ -327,9 +343,6 @@ export default {
         clearInput() {
             this.simpan.jenjang = '';
             this.simpan.ruang = '';
-        },
-        clearEditInput() {
-            this.selectedOptions = this.items.filter(arr1Item => this.rekening.some(arr2Item => arr2Item.nama_item == arr1Item.nama));
         },
         customLabel ({ nama, harga }) {
             let number = Number(harga)

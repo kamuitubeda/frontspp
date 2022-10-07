@@ -41,6 +41,7 @@
                                                 <tr>
                                                     <th>Nama</th>
                                                     <th>Jenis</th>
+                                                    <th>Total</th>
                                                     <th class="text-center" style="width: 20%">Action</th>
                                                 </tr>
                                             </thead>
@@ -48,6 +49,7 @@
                                                 <tr>
                                                     <td>{{ row.nama }}</td>
                                                     <td>{{ row.jenis }}</td>
+                                                    <td>{{ harga(Number(row.total)) }}</td>
                                                     <td>
                                                         <div class="text-center">
                                                             <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
@@ -204,7 +206,7 @@ export default {
             this.loading = true
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/rekening'
+            const apiURL = baseURL + '/api/rekening-total'
 
             axios.get(apiURL, {
                 headers: {
@@ -315,7 +317,10 @@ export default {
         clearInput() {
             this.simpan.nama = '';
             this.simpan.jenis = '';
-        }
+        },
+        harga(number){
+            return number.toLocaleString('id', { style: 'currency', currency: 'IDR' })
+        },
     }
 }
 </script>
