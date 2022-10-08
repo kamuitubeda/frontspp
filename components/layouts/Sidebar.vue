@@ -85,5 +85,9 @@
                 return this.$route.name
             },
         },
+        methods: {
+            initialize() {
+            },
+        }
     }
 </script>

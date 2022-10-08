@@ -17,17 +17,8 @@ export default {
       { rel: 'stylesheet', type: 'css', href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i' },
     ],
     script: [
-      { src: "/vendors/js/vendor.bundle.base.js", body: true, async: true},
       { src: "/vendors/chart.js/chart.min.js"},
-      { src: "/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"},
       { src: "/vendors/progressbar.js/progressbar.min.js"},
-      { src: "/js/off-canvas.js"},
-      { src: "/js/hoverable-collapse.js"},
-      { src: "/js/template.js"},
-      { src: "/js/settings.js"},
-      { src: "/js/todolist.js"},
-      { src: "/js/jquery.cookie.js"},
-      { src: "/js/dashboard.js", body: true, async: true},
       { src: "/js/Chart.roundedBarCharts.js"}
     ]
   },
