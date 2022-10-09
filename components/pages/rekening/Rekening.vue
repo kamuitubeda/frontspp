@@ -95,8 +95,12 @@
                                             </div>
                                             <div class="col-md-6 pr-0">
                                                 <div class="form-group">
-                                                    <label>Jenis Rekening</label>
-                                                    <input id="jenis" type="text" class="form-control" v-model="simpan.jenis" placeholder="Bulanan" required>
+                                                    <label for="jenis">Jenis Rekening</label>
+                                                    <select class="form-control" id="jenis" v-model="simpan.jenis">
+                                                        <option value="Insidental">Insidental</option>
+                                                        <option value="Bulanan">Bulanan</option>
+                                                        <option value="Tahunan">Tahunan</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
