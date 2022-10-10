@@ -322,7 +322,7 @@ export default {
                     }
                 }).then(response => {
                     if (index == this.selected.length - 1) { 
-                        $('#addRowModal').modal('toggle');
+                        document.querySelector("#addRowModal").modal('hide');
                         this.selected = [];
                         this.initialize();
                     }
@@ -354,7 +354,7 @@ export default {
                     }
                 }).then(response => {
                     if (index == removed.length - 1) { 
-                        $('#removeRowModal').modal('toggle');
+                        document.querySelector("#removeRowModal").modal('hide');
                         this.initialize();
                     }
                 })
