@@ -43,7 +43,7 @@
                                                     <td>{{ harga(Number(row.harga)) }}</td>
                                                     <td>
                                                         <div class="text-center">
-                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
+                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)">
                                                                 <i class="mdi mdi-eye"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row.id)" data-toggle="modal" data-target="#editRowModal">
@@ -234,8 +234,7 @@ export default {
                 .then(() => {
                     this.clearInput();
                     this.initialize();
-                    $(':input','#addRowModal').val("");
-                    $('#addRowModal').modal('toggle');
+                    document.querySelector("#addRowModal").modal('hide');
                 })
                 .catch(error => {
                     //assign validation  
@@ -244,7 +243,6 @@ export default {
         },
         editRow(item) {
             this.edit = item;
-            $('#editRowModal').modal('show');
         },
         deleteRow(item, index) {
             const token = this.$auth.strategy.token.get()

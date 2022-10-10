@@ -46,7 +46,7 @@
                                                     <td class="text-center w-50">{{ row.nama }}</td>
                                                     <td class="text-center w-50">
                                                         <div class="text-center">
-                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
+                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)">
                                                                 <i class="mdi mdi-eye"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row)" data-toggle="modal" data-target="#editRowModal">
@@ -240,8 +240,7 @@ export default {
                 .then(() => {
                     this.clearInput();
                     this.initialize();
-                    $(':input','#addRowModal').val("");
-                    $('#addRowModal').modal('toggle');
+                    document.querySelector("#addRowModal").modal('hide');
                 })
                 .catch(error => {
                     //assign validation  
@@ -250,7 +249,6 @@ export default {
         },
         editRow(item) {
             this.edit = item;
-            $('#editRowModal').modal('show');
         },
         update(e) {
             const token = this.$auth.strategy.token.get()
@@ -272,8 +270,7 @@ export default {
                 .then(() => {
                     this.clearInput();
                     this.initialize();
-                    $(':input','#editRowModal').val("");
-                    $('#editRowModal').modal('toggle');
+                    document.querySelector("#editRowModal").modal('hide');
                 })
                 .catch(error => {
                     this.validation = error.response.data

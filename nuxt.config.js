@@ -19,7 +19,8 @@ export default {
     script: [
       { src: "/vendors/chart.js/chart.min.js"},
       { src: "/vendors/progressbar.js/progressbar.min.js"},
-      { src: "/js/Chart.roundedBarCharts.js"}
+      { src: "/js/Chart.roundedBarCharts.js"},
+      { src: "/js/bootstrap.bundle.min.js"}
     ]
   },
 

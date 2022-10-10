@@ -52,13 +52,13 @@
                                                     <td>{{ harga(Number(row.total)) }}</td>
                                                     <td>
                                                         <div class="text-center">
-                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)" data-toggle="modal" data-target="#editRowModal">
+                                                            <button type="button" class="btn btn-outline-info btn-icon btn-sm" @click="show(row.id)">
                                                                 <i class="mdi mdi-eye"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row)" data-toggle="modal" data-target="#editRowModal">
+                                                            <button type="button" class="btn btn-outline-warning btn-icon btn-sm" @click="editRow(row)" data-bs-toggle="modal" data-bs-target="#editRowModal">
                                                                 <i class="mdi mdi-lead-pencil"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row, index)" data-toggle="tooltip" title="">
+                                                            <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row, index)" data-bs-toggle="tooltip" title="">
                                                                 <i class="mdi mdi-delete"></i> 
                                                             </button>
                                                         </div>
@@ -247,8 +247,7 @@ export default {
                 .then(() => {
                     this.clearInput();
                     this.initialize();
-                    $(':input','#addRowModal').val("");
-                    $('#addRowModal').modal('toggle');
+                    document.querySelector("#addRowModal").modal('hide');
                 })
                 .catch(error => {
                     this.validation = error.response.data
@@ -271,8 +270,7 @@ export default {
                 })
                 .then(() => {
                     this.initialize();
-                    $(':input','#editRowModal').val("");
-                    $('#editRowModal').modal('toggle');
+                    document.querySelector("#editRowModal").modal('hide');
                 })
                 .catch(error => {
                     this.validation = error.response.data
@@ -316,7 +314,6 @@ export default {
         },
         editRow(item) {
             this.edit = item;
-            $('#editRowModal').modal('show');
         },
         clearInput() {
             this.simpan.nama = '';

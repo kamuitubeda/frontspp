@@ -49,9 +49,9 @@ export default {
       },
       methods: {
           //JIKA TOMBOL LOGIN DITEKAN, MAKA METHOD INI AKAN DIJALANKAN
-          async login() {
+          login() {
               try {
-                  await this.$auth.loginWith('local', { 
+                  this.$auth.loginWith('local', { 
                     data: this.auth 
                   }).then(res => {
                     this.$router.push('/') // redirecting after login
