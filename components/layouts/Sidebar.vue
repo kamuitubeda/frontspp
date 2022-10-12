@@ -33,7 +33,7 @@
                 </NuxtLink>
             </li>
             <li class="nav-item" :class="{ 'active': currentPage === 'penagihan'}">
-                <NuxtLink class="nav-link" to="/item">
+                <NuxtLink class="nav-link" to="/penagihan">
                 <i class="mdi mdi-book-open menu-icon"></i>
                 <span class="menu-title">Penagihan</span>
                 </NuxtLink>
