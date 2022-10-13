@@ -294,7 +294,7 @@ export default {
             })
         },
         show(id) {
-            this.$router.push('/rekening/'+id);
+            this.$router.push('/penagihan/'+id);
         },
         editRow(item) {
             this.edit = item;

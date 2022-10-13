@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Penagihan from '@/components/pages/tagihan/Penagihan'
+import Penagihan from '@/components/pages/penagihan/Penagihan'
 export default {
     head: {
         title: "Penagihan - Adminisantri",
