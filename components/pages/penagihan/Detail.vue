@@ -70,14 +70,12 @@
                                         <table id="add-row" class="table table-hover" >
                                             <thead>
                                                 <tr>
-                                                    <th>Nama</th>
-                                                    <th>Harga</th>
+                                                    <th class="text-center">Nama</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(row,index) in filteredRows" :key="index">
-                                                    <td>{{ row.nama_item }}</td>
-                                                    <td>{{ harga(Number(row.harga)) }}</td>
+                                                    <td class="text-center">{{ row.nama_kelas }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -123,7 +121,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
                                     </div>
                                     </form>
                                 </div>
@@ -168,7 +166,7 @@
                                     </div>
                                     <div class="modal-footer no-bd">
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
+                                        <button type="submit" id="editRowButton" class="btn btn-primary" data-bs-dismiss="modal">Simpan</button>
                                     </div>
                                     </form>
                                 </div>
@@ -229,12 +227,10 @@ export default {
     computed: {
         filteredRows() {
             return this.rows.filter(row => {
-                const nama_item = row.nama_item.toLowerCase();
-                const harga = row.harga.toString().toLowerCase();
+                const nama_kelas = row.nama_kelas.toLowerCase();
                 const searchTerm = this.filter.toLowerCase();
 
-                return nama_item.includes(searchTerm) || 
-                harga.includes(searchTerm);
+                return nama_kelas.includes(searchTerm);
             });
         }
     },
@@ -311,31 +307,31 @@ export default {
             }
             ).then(response => {
                 this.options = response.data.data;
+                this.loading = false;
             })
             .catch(error => {
                 console.log(error)
             })
-
-            this.loading = false;
         },
         save(e) {
+            this.loading = true;
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/rincian-rekening'
+            const apiURL = baseURL + '/api/penagihan'
 
             e.preventDefault()
 
+            const length = this.selected.length;
             this.selected.forEach((item, index) => {
                 axios.post(apiURL, {
                     rekening_id: this.rekeningId,
-                    item_id: item.id
+                    kelas_id: item.id
                 },{
                     headers: {
                         'Authorization': token
                     }
                 }).then(response => {
-                    if (index == this.selected.length - 1) { 
-                        document.querySelector("#addRowModal").modal('hide');
+                    if (index == length - 1) { 
                         this.selected = [];
                         this.initialize();
                     }
@@ -351,13 +347,15 @@ export default {
             this.selectedItems = this.selectedOptions
         },
         remove(e) {
+            this.loading = true;
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/rincian-rekening/r/' + this.rekeningId + '/i/'
+            const apiURL = baseURL + '/api/penagihan/r/' + this.rekeningId + '/k/'
 
             e.preventDefault()
 
             const removed = this.baseOptions.filter(arr1Item => !this.selectedItems.some(arr2Item => arr2Item.nama == arr1Item.nama));
+            const length = removed.length;
 
             removed.forEach((item, index) => {
                 axios.delete(apiURL + item.id,{
@@ -366,8 +364,7 @@ export default {
                         'Authorization': token
                     }
                 }).then(response => {
-                    if (index == removed.length - 1) { 
-                        document.querySelector("#removeRowModal").modal('hide');
+                    if (index == length - 1) { 
                         this.initialize();
                     }
                 })
@@ -391,10 +388,8 @@ export default {
             this.simpan.jenjang = '';
             this.simpan.ruang = '';
         },
-        customLabel ({ nama, harga }) {
-            let number = Number(harga)
-            let formatted = number.toLocaleString('id', { style: 'currency', currency: 'IDR' })
-            return `${nama} – ${formatted}`
+        customLabel ({ nama }) {
+            return `Kelas - ${nama}`
         }
     }
 }
