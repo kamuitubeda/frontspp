@@ -61,6 +61,9 @@
                                                             <button type="button" class="btn btn-outline-danger btn-icon btn-sm" @click="deleteRow(row, index)" data-bs-toggle="tooltip" title="">
                                                                 <i class="mdi mdi-delete"></i> 
                                                             </button>
+                                                            <button type="button" class="btn btn-outline-success btn-icon btn-sm" @click="deleteRow(row, index)" data-bs-toggle="tooltip" title="">
+                                                                <i class="mdi mdi-checkbox-marked-outline"></i> 
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>

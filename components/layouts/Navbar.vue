@@ -147,7 +147,7 @@
                 </div>
             </li>
             <li class="nav-item dropdown d-none d-lg-block user-dropdown">
-                <a class="nav-link" type="button" id="UserDropdown" data-bs-toggle="dropdown" aria-expanded="false" @click="toggleUserDropdown">
+                <a class="nav-link" type="button" id="UserDropdown" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                 <img class="img-xs rounded-circle" src="~/assets/images/faces/face8.jpg" alt="Profile image"> </a>
                 <div id="UserDropdownMenu" class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                     <div class="dropdown-header text-center">
@@ -207,21 +207,21 @@
             }
         },
 
-        toggleUserDropdown() {
-            const dropdown = document.querySelector("#UserDropdown");
-            const menu = document.querySelector("#UserDropdownMenu");
-            if (dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-            }   else {
-                dropdown.classList.add('show');
-            }
+        // toggleUserDropdown() {
+        //     const dropdown = document.querySelector("#UserDropdown");
+        //     const menu = document.querySelector("#UserDropdownMenu");
+        //     if (dropdown.classList.contains('show')) {
+        //         dropdown.classList.remove('show');
+        //     }   else {
+        //         dropdown.classList.add('show');
+        //     }
 
-            if (menu.classList.contains('show')) {
-                menu.classList.remove('show');
-            }   else {
-                menu.classList.add('show');
-            }
-        },
+        //     if (menu.classList.contains('show')) {
+        //         menu.classList.remove('show');
+        //     }   else {
+        //         menu.classList.add('show');
+        //     }
+        // },
       }
     }
     </script>

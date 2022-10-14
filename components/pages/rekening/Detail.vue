@@ -37,16 +37,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
+                <div class="col-md-6 col-sm-12 grid-margin">
                     <div class="card">
                         <div class="card-body">
+                            <h4 class="card-title">Daftar Item Rekening</h4>
                             <div class="row">
                                 <div class="col">
                                     <div class="d-flex justify-content-between">
                                         <div class="col-sm-6 col-md-4">
                                             <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="filter" />
                                         </div>
-                                        <div class="col-md-4 d-flex justify-content-end">
+                                        <div class="col-md-6 d-flex justify-content-end">
                                             <button type="button" class="btn btn-primary btn-sm btn-icon d-md-none" data-bs-toggle="modal" data-bs-target="#addRowModal">
                                                 <i class="mdi mdi-plus-circle"></i>
                                             </button>
@@ -123,7 +124,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
                                     </div>
                                     </form>
                                 </div>
@@ -168,7 +169,145 @@
                                     </div>
                                     <div class="modal-footer no-bd">
                                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" id="editRowButton" class="btn btn-primary">Simpan</button>
+                                        <button type="submit" id="editRowButton" class="btn btn-primary" data-bs-dismiss="modal">Simpan</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 grid-margin">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Daftar Kelas Tujuan</h4>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="col-sm-6 col-md-4">
+                                            <input type="text" class="form-control" placeholder="Masukkan kata kunci" v-model="classFilter" />
+                                        </div>
+                                        <div class="col-md-6 d-flex justify-content-end">
+                                            <button type="button" class="btn btn-primary btn-sm btn-icon d-md-none" data-bs-toggle="modal" data-bs-target="#addRowClassModal">
+                                                <i class="mdi mdi-plus-circle"></i>
+                                            </button>
+                                            <button class="btn btn-primary d-none d-md-block" data-bs-toggle="modal" data-bs-target="#addRowClassModal">
+                                                Tambah Tujuan
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm btn-icon d-md-none ms-2" data-bs-toggle="modal" data-bs-target="#removeRowClassModal">
+                                                <i class="mdi mdi-minus-circle"></i>
+                                            </button>
+                                            <button class="btn btn-danger d-none d-md-block ms-2" data-bs-toggle="modal" data-bs-target="#removeRowClassModal" @click="initEdit">
+                                                Hapus Tujuan
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div v-if="loading" class="loading-page d-flex justify-content-center">
+                                        <div>
+                                            <img src="~/assets/images/loading.gif" alt="Loading">
+                                        </div>
+                                    </div>
+                                    <div v-else class="table-responsive">
+                                        <table id="add-row" class="table table-hover" >
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(row,index) in filteredClassRows" :key="index">
+                                                    <td>Kelas - {{ row.nama_kelas }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="addRowClassModal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header no-bd">
+                                        <h5 class="modal-title">
+                                            <span class="fw-mediumbold">
+                                            Tambah</span> 
+                                            <span class="fw-light">
+                                                Rincian
+                                            </span>
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form @submit.prevent="save" autocomplete="off">
+                                    <div class="modal-body">
+                                        <p class="small">Silakan pilih item yang akan ditambahkan</p>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <multiselect
+                                                    v-model="selectedClassInput"
+                                                    :options="classOptions"
+                                                    :multiple="true"
+                                                    :close-on-select="false"
+                                                    :clear-on-select="false"
+                                                    :hide-selected="true"
+                                                    :preserve-search="true"
+                                                    placeholder="Pilih Item"
+                                                    :custom-label="customClassLabel" 
+                                                    track-by="nama"
+                                                    :preselect-first="false"
+                                                    id="multikelasinput"
+                                                    >
+                                                </multiselect>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="removeRowClassModal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header no-bd">
+                                        <h5 class="modal-title">
+                                            <span class="fw-light">
+                                                Edit
+                                            </span>
+                                            <span class="fw-mediumbold">
+                                                Kelas
+                                            </span> 
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form @submit.prevent="remove">
+                                    <div class="modal-body">
+                                        <p class="small">Isi semua kolom berikut ini</p>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <multiselect
+                                                    v-model="selectedClass"
+                                                    :options="selectedClassOptions"
+                                                    :multiple="true"
+                                                    :close-on-select="false"
+                                                    :clear-on-select="false"
+                                                    :hide-selected="true"
+                                                    :preserve-search="true"
+                                                    placeholder="Pilih Item"
+                                                    :custom-label="customClassLabel" 
+                                                    track-by="nama"
+                                                    :preselect-first="false"
+                                                    id="multikelas"
+                                                    >
+                                                </multiselect>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer no-bd">
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" id="editRowButton" class="btn btn-primary" data-bs-dismiss="modal">Simpan</button>
                                     </div>
                                     </form>
                                 </div>
@@ -196,15 +335,23 @@ export default {
       return {
         loading: false,
         filter: '',
+        classFilter: '',
         selectedRekening: {},
         total: 0,
         rows: [],
+        classRows: [],
         items: [],
         options: [],
+        classOptions: [],
         baseOptions: [],
+        baseClassOptions: [],
         selectedOptions: [],
+        selectedClassOptions: [],
         rekening: [],
+        classRekening: [],
         selected: [],
+        selectedClassInput: [],
+        selectedClass: [],
         selectedItems: [],
         kelas: {},
         simpan: {
@@ -236,11 +383,53 @@ export default {
                 return nama_item.includes(searchTerm) || 
                 harga.includes(searchTerm);
             });
+        },
+        filteredClassRows() {
+            return this.classRows.filter(row => {
+                const nama_kelas = row.nama_kelas.toLowerCase();
+                const searchTerm = this.classFilter.toLowerCase();
+
+                return nama_kelas.includes(searchTerm);
+            });
         }
     },
     methods: {
         initialize() {
             this.loading = true;
+            
+            this.loadItemRekening();
+            this.loadClassRekening();
+        },
+        save(e) {
+            const token = this.$auth.strategy.token.get()
+            const baseURL = process.env.baseURL
+            const apiURL = baseURL + '/api/rincian-rekening'
+
+            e.preventDefault()
+
+            this.selected.forEach((item, index) => {
+                axios.post(apiURL, {
+                    rekening_id: this.rekeningId,
+                    item_id: item.id
+                },{
+                    headers: {
+                        'Authorization': token
+                    }
+                }).then(response => {
+                    if (index == this.selected.length - 1) { 
+                        document.querySelector("#addRowModal").modal('hide');
+                        this.selected = [];
+                        this.initialize();
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+            });
+
+            
+        },
+        loadItemRekening() {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
             const detail = baseURL + '/api/rekening/' + this.rekeningId
@@ -302,37 +491,55 @@ export default {
             .catch(error => {
                 console.log(error)
             })
-
-            this.loading = false;
         },
-        save(e) {
+        loadClassRekening() {
             const token = this.$auth.strategy.token.get()
             const baseURL = process.env.baseURL
-            const apiURL = baseURL + '/api/rincian-rekening'
+            const rekening = baseURL + '/api/kelas/rekening/' + this.rekeningId
+            const selectAPI = baseURL + '/api/kelas/selected/' + this.rekeningId
+            const optionAPI = baseURL + '/api/kelas/option/' + this.rekeningId
 
-            e.preventDefault()
+            axios.get(rekening, {
+                headers: {
+                    'Authorization': token,
+                    'Accept': 'application/json'
+                }
+            }
+            ).then(response => {
+                this.classRekening = response.data.data
+                this.classRows = this.classRekening
+            })
+            .catch(error => {
+                console.log(error)
+            })
 
-            this.selected.forEach((item, index) => {
-                axios.post(apiURL, {
-                    rekening_id: this.rekeningId,
-                    item_id: item.id
-                },{
-                    headers: {
-                        'Authorization': token
-                    }
-                }).then(response => {
-                    if (index == this.selected.length - 1) { 
-                        document.querySelector("#addRowModal").modal('hide');
-                        this.selected = [];
-                        this.initialize();
-                    }
-                })
-                .catch(error => {
-                    console.log(error)
-                });
-            });
+            axios.get(selectAPI, {
+                headers: {
+                    'Authorization': token,
+                    'Accept': 'application/json'
+                }
+            }
+            ).then(response => {
+                this.selectedClassOptions = response.data.data;
+                this.baseClassOptions = this.selectedClassOptions;
+            })
+            .catch(error => {
+                console.log(error)
+            })
 
-            
+            axios.get(optionAPI, {
+                headers: {
+                    'Authorization': token,
+                    'Accept': 'application/json'
+                }
+            }
+            ).then(response => {
+                this.classOptions = response.data.data;
+                this.loading = false;
+            })
+            .catch(error => {
+                console.log(error)
+            })
         },
         initEdit() {
             this.selectedItems = this.selectedOptions
@@ -382,6 +589,9 @@ export default {
             let number = Number(harga)
             let formatted = number.toLocaleString('id', { style: 'currency', currency: 'IDR' })
             return `${nama} – ${formatted}`
+        },
+        customClassLabel ({ nama }) {
+            return `Kelas - ${nama}`
         }
     }
 }

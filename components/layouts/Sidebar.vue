@@ -32,12 +32,6 @@
                 <span class="menu-title">Item</span>
                 </NuxtLink>
             </li>
-            <li class="nav-item" :class="{ 'active': currentPage === 'penagihan'}">
-                <NuxtLink class="nav-link" to="/penagihan">
-                <i class="mdi mdi-book-open menu-icon"></i>
-                <span class="menu-title">Penagihan</span>
-                </NuxtLink>
-            </li>
             <li class="nav-item" :class="{ 'active': currentPage === 'tagihan'}">
                 <NuxtLink class="nav-link" to="/tagihan">
                 <i class="mdi mdi-email menu-icon"></i>
